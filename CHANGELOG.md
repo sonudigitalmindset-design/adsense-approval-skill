@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.1 — 17 November 2026
+
+- `scripts/deep_audit.py` now prints progress to stderr
+  while it fetches pages and verifies links and images,
+  so a long verification stage never looks stuck. The
+  report file stays clean: progress lines never enter
+  the `--output` report.
+
 ## 1.7.0 — 17 November 2026
 
 - `scripts/deep_audit.py` now checks in parallel: 8

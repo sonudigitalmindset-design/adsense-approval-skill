@@ -168,6 +168,15 @@ def info(message):
     emit(f"      {message}")
 
 
+def _progress(done, total, label):
+    """One progress line on stderr, so the run never looks stuck.
+
+    Stderr stays out of the --output report file, which keeps
+    only the findings. Progress goes to the terminal only.
+    """
+    _REAL_PRINT(f"  ... {done}/{total} {label}", file=sys.stderr)
+
+
 def fetch(url, timeout):
     """GET a URL, retrying once after a transient failure.
 
@@ -882,11 +891,15 @@ def main():
     outlink_map = {}
     # Fetch all pages in parallel, then analyse them in sitemap
     # order so the report reads the same as a sequential run.
+    fetched = []
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
-        fetched = list(executor.map(
+        for i, result in enumerate(executor.map(
             _fetch_page,
             [(page_url, args.timeout, args.delay) for page_url in pages],
-        ))
+        ), 1):
+            fetched.append(result)
+            if i % 10 == 0 or i == len(pages):
+                _progress(i, len(pages), "pages fetched")
     for page_url, (status, final_url, body, error) in zip(pages, fetched):
         record = {"url": page_url, "status": status, "final": final_url, "flags": []}
         if status != 200 or not body:
@@ -1289,11 +1302,15 @@ def main():
     print()
     links_to_check = sorted(internal_links)[: args.max_links]
     print(f"Verifying {len(links_to_check)} unique internal links (cap {args.max_links}).")
+    checked = []
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
-        checked = list(executor.map(
+        for i, result in enumerate(executor.map(
             _fetch_status,
             [(link, args.timeout, args.delay) for link in links_to_check],
-        ))
+        ), 1):
+            checked.append(result)
+            if i % 25 == 0 or i == len(links_to_check):
+                _progress(i, len(links_to_check), "internal links checked")
     broken = [(link, error or status) for link, status, error in checked if status != 200]
     if broken:
         report("fail", f"{len(broken)} internal links do not return 200.")
@@ -1306,11 +1323,15 @@ def main():
     print()
     ext_to_check = sorted(external_links)[: args.max_external]
     print(f"Verifying {len(ext_to_check)} unique external links (cap {args.max_external}).")
+    probed_ext = []
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
-        probed_ext = list(executor.map(
+        for i, result in enumerate(executor.map(
             _probe_url,
             [(link, args.timeout, args.delay) for link in ext_to_check],
-        ))
+        ), 1):
+            probed_ext.append(result)
+            if i % 25 == 0 or i == len(ext_to_check):
+                _progress(i, len(ext_to_check), "external links checked")
     ext_broken = []
     ext_unverified = []
     for link, status, error, _ in probed_ext:
@@ -1333,11 +1354,15 @@ def main():
     print()
     imgs_to_check = sorted(image_urls)[: args.max_images]
     print(f"Verifying {len(imgs_to_check)} unique same-origin images (cap {args.max_images}).")
+    probed_imgs = []
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
-        probed_imgs = list(executor.map(
+        for i, result in enumerate(executor.map(
             _probe_url,
             [(link, args.timeout, args.delay) for link in imgs_to_check],
-        ))
+        ), 1):
+            probed_imgs.append(result)
+            if i % 25 == 0 or i == len(imgs_to_check):
+                _progress(i, len(imgs_to_check), "images checked")
     broken_imgs = []
     unverified_imgs = []
     big_imgs = []
