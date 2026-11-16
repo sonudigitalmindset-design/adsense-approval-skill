@@ -30,8 +30,21 @@ points at the live official pages as the source of truth.
 | `references/09-content-quality-guide.md` | Originality, AI content, copyright, YMYL, trust signals |
 | `references/10-glossary.md` | Plain-language definitions with examples |
 | `references/11-official-sources.md` | Every official link, with a 2-minute verification habit |
+| `references/12-mistakes-encyclopedia.md` | 52 mistakes that get sites rejected or accounts closed |
+| `references/13-ad-formats-and-placement.md` | Auto ads, ad units, and placement rules for every format |
+| `references/14-optimization-and-revenue.md` | Metrics, experiments, blocking controls, and honest earnings levers |
+| `references/15-policy-center-and-appeals.md` | Enforcement levels, fix workflow, and the invalid traffic appeal |
+| `references/16-verification-and-payments-troubleshooting.md` | Identity, PIN, payment methods, tax info, and holds |
+| `references/17-youtube-and-other-products.md` | YPP, AdSense for Search, AdMob, and Ad Manager |
+| `references/18-consent-and-privacy-deep-dive.md` | Certified CMP, Funding Choices, TCF, Consent Mode, disclosures |
+| `references/19-platform-setup-guides.md` | WordPress, Blogger, static sites, builders, ads.txt, sellers.json |
+| `references/20-troubleshooting-index.md` | 25 symptoms with likely cause and first check |
+| `references/21-traffic-and-seo-basics.md` | Legitimate traffic, Search Console, and durable growth |
+| `references/22-learning-paths.md` | Zero-to-advanced reading paths with checks, plus FAQ |
 | `scripts/site_audit.py` | Read-only readiness checker (Python standard library only) |
 | `examples/audit-report-template.md` | Report template for one site audit |
+| `examples/privacy-policy-outline.md` | Privacy Policy structure to adapt, with ad disclosure |
+| `examples/policy-appeal-outline.md` | Fact-based appeal structure for invalid traffic cases |
 
 ## Install
 
@@ -81,6 +94,11 @@ always follow it with the human audit in
 `references/08-pre-apply-checklist.md`.
 
 ## Learning path
+
+The full zero-to-advanced path, with a check at each level, is in
+`references/22-learning-paths.md`: beginner, preparing a first
+site, applying, running ads, optimization, and advanced
+multi-product work.
 
 New to AdSense? Read in this order:
 

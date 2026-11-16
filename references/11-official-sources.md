@@ -37,6 +37,16 @@ web search results or are the well-known AdSense Help entry points.
   the publisher's country is read.
 - AdSense revenue share and payment pages: open from the live AdSense
   Help Center. Do not rely on a remembered percentage or threshold.
+- YouTube Partner Program overview and eligibility (thresholds
+  verified November 2026):
+  https://support.google.com/youtube/answer/72851?hl=en
+- Invalid traffic appeal form (linked from the AdSense Help page on
+  accounts disabled for invalid traffic):
+  https://support.google.com/adsense/contact/appeal_form_adsense_admob?hl=en
+- Funding Choices and certified CMP requirements: open from the live
+  AdSense Help Center under Privacy and messaging, and read the EU
+  User Consent Policy page linked from there. Do not rely on a
+  remembered setup path.
 
 ## History sources used for the timeline
 

@@ -7,7 +7,7 @@ description: Teach and apply Google AdSense approval rules from 2003 to today, a
 
 ## Decide what the user needs
 
-- Ask whether the user wants to learn the rules, audit a site before applying, fix a rejection, or keep an approved account safe when the request does not say.
+- Ask whether the user wants to learn the rules, audit a site before applying, fix a rejection, keep an approved account safe, choose ad formats, improve earnings, handle a policy flag or appeal, fix verification or payments, or learn about YouTube and other AdSense products when the request does not say.
 
 - Explain in the language the user writes in and keep official rules, community practice, and myths in separate words so they never blend.
 
@@ -84,6 +84,28 @@ description: Teach and apply Google AdSense approval rules from 2003 to today, a
 - Keep identity and payment details accurate. Complete identity verification and address PIN verification inside the deadlines Google shows in the account. Read `references/06-terms-and-payments.md` before you advise on payments, thresholds, or holds.
 
 - Never advise a workaround that hides a violation, such as cloaking, a second account for the same payee, or moving violating content to a subdomain to keep ads running.
+
+## Help with formats, optimization, appeals, and verification
+
+- Recommend ad formats from `references/13-ad-formats-and-placement.md`. Explain Auto ads and manual units, the formats inside each, and the placement rules that apply to all of them. Never promise that one format earns more than another.
+
+- Advise on earnings from `references/14-optimization-and-revenue.md`. Judge changes by total earnings and user experience together, test one variable at a time with experiments, and treat blocking controls as brand-safety tools, not revenue levers. Never quote a third-party RPM benchmark as a fact.
+
+- Handle policy flags and appeals from `references/15-policy-center-and-appeals.md`. Read the exact notice first, fix the root cause, and build an appeal from dated facts and log evidence. Use `examples/policy-appeal-outline.md` as a structure, never as copied text. Warn that further appeals may not be considered after a decision.
+
+- Fix verification and payment problems from `references/16-verification-and-payments-troubleshooting.md`. Check the five-point name match first, follow the deadlines shown in the account, and never advise creating a second account or a new payments profile to dodge a failed verification.
+
+- Answer YouTube and other product questions from `references/17-youtube-and-other-products.md`. Keep AdSense for Content, AdSense for YouTube, AdSense for Search, AdMob, and Ad Manager separate, and state YPP thresholds only as verified on the live Help page.
+
+- Answer consent questions from `references/18-consent-and-privacy-deep-dive.md`. Require a certified CMP for EEA, UK, and Swiss traffic, and adapt `examples/privacy-policy-outline.md` to the site instead of copying it unchanged.
+
+- Set up a site from `references/19-platform-setup-guides.md`. Place code, publish ads.txt with the line copied from the account, and verify every file live before applying.
+
+- Diagnose any symptom from `references/20-troubleshooting-index.md` first, then read the linked reference for the full fix.
+
+- Build traffic honestly from `references/21-traffic-and-seo-basics.md`. Never recommend bought traffic, click exchanges, bots, or any scheme that pays people to visit or click.
+
+- Teach the whole journey from `references/22-learning-paths.md`. Match the level to the user, from complete beginner to advanced multi-product work, and use the checks at each level before moving on.
 
 ## Teach the history and the terms
 

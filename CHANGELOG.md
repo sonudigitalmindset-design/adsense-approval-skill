@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.1.0 — 17 November 2026
+
+- Eleven new reference files complete the zero-to-advanced
+  coverage: mistakes encyclopedia, ad formats and placement,
+  optimization and revenue, Policy Center and appeals,
+  verification and payments troubleshooting, YouTube and other
+  products, consent and privacy deep dive, platform setup guides,
+  troubleshooting index, traffic and SEO basics, and learning
+  paths with FAQ.
+- Two new examples: a Privacy Policy outline to adapt, and a
+  fact-based policy appeal outline.
+- `SKILL.md` gains workflows for formats, optimization, appeals,
+  verification, YouTube, consent, platform setup, troubleshooting,
+  traffic, and learning paths.
+- `references/11-official-sources.md` gains the verified YouTube
+  Partner Program eligibility page and the invalid traffic appeal
+  form link. YouTube thresholds are now verified against the
+  official Help page, not labelled unverified.
+- Figures that come from secondary sources (identity verification
+  window, PIN timing, tax withholding rates) are labelled
+  reported, with the account's own shown deadlines and figures
+  stated as the authority.
+
 ## 1.0.1 — 17 November 2026
 
 - `scripts/site_audit.py`: retry each fetch once after a transient
