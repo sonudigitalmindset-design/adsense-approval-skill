@@ -109,16 +109,17 @@
   bargain: original content that serves readers, genuine user interest
   behind every click and impression, and honest disclosure about data
   use.
-- **June 2026, identity verification before ads (OFFICIAL):** from
-  June 2026, publishers may need to verify their identity before
+- **2026, identity verification before ads (OFFICIAL):**
+  publishers may need to verify their identity before
   the account can start showing ads, by submitting a
-  government-issued photo ID and, depending on location, taking
-  a video selfie. The window is 45 days from the first request,
-  after which Google stops showing ads or pauses activation.
-  Verified on the live AdSense Help page "Verify your identity
-  using online verification" on 17 November 2026. The account
-  setup page describes the same step from June 2026. Full
-  process details are in
+  government-issued photo ID and, in locations where
+  online verification is offered, taking a video selfie
+  for a face match. The window is 45 days from the first
+  request, after which Google stops showing ads. Verified
+  on the live AdSense Help page "Verify your identity
+  using online verification" on 17 November 2026. Reports
+  place the rollout in June 2026. Full process details
+  are in
   `references/16-verification-and-payments-troubleshooting.md`.
 
 ## The through-line for learners

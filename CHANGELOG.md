@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.1 — 17 November 2026
+
+- `references/01-history-timeline.md`: the identity
+  verification entry now rests only on what was read
+  directly on the live Help page. The step itself is
+  official. The June 2026 rollout date is labelled as
+  reported, not as read on the page.
+
 ## 1.8.0 — 17 November 2026
 
 - New `references/34-supported-languages.md`: the full
