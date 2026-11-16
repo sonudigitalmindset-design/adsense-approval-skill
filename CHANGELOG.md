@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.0 — 17 November 2026
+
+- New `scripts/deep_audit.py`: an approval-clone crawler that
+  walks the sitemap and checks every page point by point —
+  titles, descriptions, H1s, word counts, image alt text,
+  canonicals, noindex flags, mixed content, placeholder text,
+  duplicate titles and descriptions, and internal link
+  verification — plus trust pages and Privacy disclosure
+  keywords. Read-only, Python standard library only. Review
+  phrases match on word boundaries (so "specialist" never trips
+  a drug-name flag) and canonical comparison ignores URL
+  encoding differences, both fixed after the first live run
+  against thegroundzerofit.com.
+- New `references/23-approval-clone-audit.md`: the clone method,
+  the reviewer simulation workflow, and an honest list of what no
+  crawler can judge. Script thresholds are labelled as practice
+  and heuristics, never as Google rules.
+- `SKILL.md` audit workflow now runs the deep audit after the
+  quick checker.
+
 ## 1.1.1 — 17 November 2026
 
 - `scripts/site_audit.py`: the title parser now reads only the

@@ -41,7 +41,9 @@ points at the live official pages as the source of truth.
 | `references/20-troubleshooting-index.md` | 25 symptoms with likely cause and first check |
 | `references/21-traffic-and-seo-basics.md` | Legitimate traffic, Search Console, and durable growth |
 | `references/22-learning-paths.md` | Zero-to-advanced reading paths with checks, plus FAQ |
+| `references/23-approval-clone-audit.md` | Deep crawl method: every checkable review point, and its limits |
 | `scripts/site_audit.py` | Read-only readiness checker (Python standard library only) |
+| `scripts/deep_audit.py` | Deep approval-clone crawler: every page, every small point |
 | `examples/audit-report-template.md` | Report template for one site audit |
 | `examples/privacy-policy-outline.md` | Privacy Policy structure to adapt, with ad disclosure |
 | `examples/policy-appeal-outline.md` | Fact-based appeal structure for invalid traffic cases |
@@ -92,6 +94,19 @@ ads.txt, and common trust-page URLs, and reports blockers and
 warnings. It cannot judge content quality or policy compliance, so
 always follow it with the human audit in
 `references/08-pre-apply-checklist.md`.
+
+## Use the deep approval-clone audit
+
+```bash
+python3 scripts/deep_audit.py https://example.com --output report.md
+```
+
+It crawls the sitemap and checks every page point by point:
+titles, descriptions, H1s, word counts, image alt text, canonicals,
+noindex flags, mixed content, placeholder text, duplicate titles,
+and every internal link. It replicates the checkable surface of a
+review, not Google's decision. See
+`references/23-approval-clone-audit.md` for the method and limits.
 
 ## Learning path
 

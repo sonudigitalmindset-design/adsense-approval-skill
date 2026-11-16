@@ -29,6 +29,8 @@ description: Teach and apply Google AdSense approval rules from 2003 to today, a
 
 - Run the read only checker in `scripts/site_audit.py` against the live site first and treat its output as a starting point, not a verdict.
 
+- Run the deep approval-clone audit in `scripts/deep_audit.py` to crawl the sitemap and check every page point by point: titles, descriptions, H1s, word counts, image alt text, canonicals, noindex flags, mixed content, placeholder text, duplicate titles, and every internal link. Read `references/23-approval-clone-audit.md` for the method, the thresholds, and what the clone cannot judge. Fix every failure, decide every warning by reading the page, and never present the script thresholds as Google's rules.
+
 - Check the eligibility basics from `references/02-eligibility-and-application.md`. The applicant must be 18 or older or apply through a parent or guardian, must own or control the site and its HTML, must publish original high quality content, and must follow the Program policies.
 
 - Check every page a reviewer can reach, not only the homepage. Remove demo content, empty categories, broken links, under construction pages, and placeholder text before applying.
