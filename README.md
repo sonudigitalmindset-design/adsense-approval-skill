@@ -51,6 +51,7 @@ points at the live official pages as the source of truth.
 | `references/30-advanced-decision-playbooks.md` | Ten hard situations with checks, actions, and stop rules |
 | `references/31-approval-check-matrix.md` | Every approval check: automated, human-decided, and uncheckable |
 | `references/32-hidden-deep-approval-checks.md` | Confirmed, suggested, and hidden review layers, with the deep checks |
+| `references/33-unpublished-review-signals.md` | Inferred reviewer signals, each labelled, never taught as rules |
 | `scripts/site_audit.py` | Read-only readiness checker (Python standard library only) |
 | `scripts/deep_audit.py` | Deep approval-clone crawler: every page, every small point |
 | `examples/audit-report-template.md` | Report template for one site audit |

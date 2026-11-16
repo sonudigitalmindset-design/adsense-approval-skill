@@ -147,6 +147,11 @@ rule:
   full Layer 1 surface from
   `references/23-approval-clone-audit.md`.
 
+For the wider set of inferred signals, grouped by
+trust, depth, freshness, completeness, technical
+quality, and monetisation hygiene, read
+`references/33-unpublished-review-signals.md`.
+
 ## How to use this reference before applying
 
 - Fix every Layer 1 failure. These are real rules.

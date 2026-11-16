@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.5.0 — 17 November 2026
+
+- New `references/33-unpublished-review-signals.md`:
+  the signals rejection patterns suggest a reviewer
+  weighs, grouped into identity and trust, content
+  depth, freshness and activity, navigation and
+  completeness, technical quality, monetisation
+  hygiene, and account and traffic shadows. Every
+  signal is labelled INFERRED and is never taught as
+  a confirmed Google rule.
+- `scripts/deep_audit.py` new checks: homepage noindex
+  failure, Search Console verification signal,
+  homepage content links, current year staleness,
+  thin trust pages, favicon coverage, social platform
+  links, email links on the Contact page, comment and
+  related-content markers, nofollow counts, updated
+  markers, internal link depth averages, ads.txt
+  RESELLER counts, and image file sizes over 1 MB
+  from Content-Length. New fields flow into the JSON
+  report.
+- `scripts/site_audit.py`: homepage noindex is now a
+  failure in the quick check.
+
 ## 1.4.0 — 17 November 2026
 
 - `scripts/deep_audit.py` version 2: the approval clone now

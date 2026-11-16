@@ -66,6 +66,7 @@ class _LinkTitleParser(HTMLParser):
         self.has_viewport = False
         self.html_lang = ""
         self.has_favicon = False
+        self.robots_meta = ""
         self.links = []
         self.text_parts = []
 
@@ -77,6 +78,8 @@ class _LinkTitleParser(HTMLParser):
             self.in_title = True
         if tag == "meta" and attrs.get("name", "").lower() == "viewport":
             self.has_viewport = True
+        if tag == "meta" and attrs.get("name", "").lower() == "robots":
+            self.robots_meta = attrs.get("content", "")
         if tag == "link" and "icon" in attrs.get("rel", "").lower():
             self.has_favicon = True
         if tag == "a" and attrs.get("href"):
@@ -199,6 +202,8 @@ def main(argv=None):
         report("ok", "Viewport meta tag present (mobile layout signal).")
     else:
         report("warn", "No viewport meta tag found. Check mobile layout.")
+    if "noindex" in parser_html.robots_meta.lower():
+        report("fail", "Homepage carries noindex. A noindexed homepage cannot be reviewed or ranked. Remove it before applying.")
     if parser_html.html_lang:
         report("ok", f"HTML lang attribute present (lang={parser_html.html_lang}).")
     else:

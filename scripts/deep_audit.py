@@ -231,8 +231,10 @@ def fetch(url, timeout):
 def head_or_get(url, timeout):
     """Lightweight check for a link or image.
 
-    Returns (status, error). HEAD first, GET fallback on 405/501.
-    A status of None means the check itself failed.
+    Returns (status, error, size_bytes). HEAD first, GET fallback
+    on 405/501. A status of None means the check itself failed.
+    size_bytes comes from the Content-Length header when the
+    server sends one, else 0.
     """
     ctx = ssl.create_default_context()
     for method in ("HEAD", "GET"):
@@ -241,16 +243,20 @@ def head_or_get(url, timeout):
         )
         try:
             with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
+                try:
+                    size = int(resp.headers.get("content-length", "0"))
+                except ValueError:
+                    size = 0
                 if method == "GET":
                     resp.read(65536)
-                return resp.status, None
+                return resp.status, None, size
         except urllib.error.HTTPError as exc:
             if exc.code in (405, 501) and method == "HEAD":
                 continue
-            return exc.code, f"HTTP {exc.code}"
+            return exc.code, f"HTTP {exc.code}", 0
         except Exception as exc:  # noqa: BLE001 - report any failure
-            return None, str(exc)
-    return None, "unreachable"
+            return None, str(exc), 0
+    return None, "unreachable", 0
 
 
 class _PageParser(HTMLParser):
@@ -290,6 +296,11 @@ class _PageParser(HTMLParser):
         self.has_form = False
         self.has_search = False
         self.sponsored_count = 0
+        self.mailto_count = 0
+        self.comment_markers = 0
+        self.related_markers = 0
+        self.nofollow_count = 0
+        self.updated_signal = False
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -326,8 +337,13 @@ class _PageParser(HTMLParser):
             )
         if tag == "a" and attrs.get("href"):
             self.links.append(attrs["href"])
-            if "sponsored" in attrs.get("rel", "").lower():
+            rel = attrs.get("rel", "").lower()
+            if "sponsored" in rel:
                 self.sponsored_count += 1
+            if "nofollow" in rel:
+                self.nofollow_count += 1
+            if attrs["href"].lower().startswith("mailto:"):
+                self.mailto_count += 1
         if tag == "nav":
             self.has_nav = True
         if tag == "footer":
@@ -355,6 +371,12 @@ class _PageParser(HTMLParser):
             self.author_signal = True
         if attrs.get("rel") == "author":
             self.author_signal = True
+        if "comment-form" in cls or "respond" in cls:
+            self.comment_markers += 1
+        if "related" in cls:
+            self.related_markers += 1
+        if "updated" in cls or "modified" in cls:
+            self.updated_signal = True
         if any(k in cls for k in POPUP_KEYWORDS):
             self.popup_markers += 1
 
@@ -583,11 +605,14 @@ def main():
     if status == 200:
         google_lines = []
         malformed = []
+        reseller = 0
         for line in ads_txt.splitlines():
             stripped = line.strip()
             if not stripped or stripped.startswith("#"):
                 continue
             parts = [p.strip() for p in stripped.split(",")]
+            if len(parts) >= 3 and parts[2].upper() == "RESELLER":
+                reseller += 1
             if parts and parts[0].lower() == "google.com":
                 google_lines.append(parts)
                 if len(parts) < 3 or not re.fullmatch(r"pub-\d{16}", parts[1] or ""):
@@ -604,6 +629,8 @@ def main():
             report("warn", f"ads.txt has {len(malformed)} malformed Google line(s). Copy the line from the account.")
         else:
             report("warn", "ads.txt exists but no Google publisher line was found.")
+        if reseller:
+            info(f"ads.txt has {reseller} RESELLER line(s). Each reseller is another party in the chain. Keep only resellers actually used.")
     elif status == 404:
         report("warn", "No ads.txt found (HTTP 404). Publish it after signup.")
     else:
@@ -836,6 +863,12 @@ def main():
         record["has_form"] = parser_html.has_form
         record["has_search"] = parser_html.has_search
         record["sponsored"] = parser_html.sponsored_count
+        record["mailto"] = parser_html.mailto_count
+        record["comment_markers"] = parser_html.comment_markers
+        record["related_markers"] = parser_html.related_markers
+        record["nofollow"] = parser_html.nofollow_count
+        record["updated_signal"] = parser_html.updated_signal
+        record["site_verification"] = "google-site-verification" in parser_html.metas
         record["mixed"] = len(re.findall(r'''(?:src|href)="http://''', body))
         record["trust_links"] = 0
         outlink_map[page_url] = set()
@@ -1096,6 +1129,66 @@ def main():
         for r in thin_archives[:10]:
             print(f"      {r['article_words']} article words: {r['url']}")
 
+    # Homepage gates and trust depth
+    if home_record:
+        if "noindex" in home_record["robots_meta"].lower():
+            report("fail", "Homepage carries noindex. A noindexed homepage cannot be reviewed or ranked. Remove it before applying.")
+        if home_record["site_verification"]:
+            info("Homepage carries a google-site-verification meta tag (Search Console ownership signal).")
+        home_links = outlink_map.get(home_record["url"], set())
+
+        def _is_content_link(u):
+            path = urlparse(u).path
+            if path in trust_paths or path.rstrip("/") == "":
+                return False
+            return not any(seg in path for seg in ("/category/", "/tag/", "/author/", "/page/", "/feed"))
+
+        content_links = [u for u in home_links if _is_content_link(u)]
+        info(f"Homepage links to {len(content_links)} content URLs (posts or pages). A homepage that shows no content reads as a shell.")
+        current_year = str(datetime.datetime.now().year)
+        if current_year not in home_body:
+            info("Current year not found in homepage HTML. A stale footer year is a small staleness signal.")
+    thin_trust = [r for r in ok_pages
+                  if urlparse(r["url"]).path in trust_paths and r["words"] < 100]
+    if thin_trust:
+        report("warn", f"{len(thin_trust)} trust {'page has' if len(thin_trust) == 1 else 'pages have'} under 100 words. Short trust pages read as placeholders.")
+        for r in thin_trust[:10]:
+            print(f"      {r['words']} words: {r['url']}")
+    no_favicon = [r for r in ok_pages if not r["favicon"]]
+    if no_favicon:
+        info(f"{len(no_favicon)} pages have no favicon link (browser tab and bookmark signal).")
+    social_domains = ("facebook.com", "instagram.com", "youtube.com",
+                      "x.com", "twitter.com", "linkedin.com", "pinterest.com")
+    social_links = [u for u in external_links
+                    if any(urlparse(u).netloc.lower().endswith(d) for d in social_domains)]
+    if social_links:
+        platforms = {urlparse(u).netloc.lower() for u in social_links}
+        info(f"{len(social_links)} links point to social platforms across {len(platforms)} domains. A visible social presence supports trust.")
+    else:
+        info("No links to major social platforms were found. A visible social presence supports trust.")
+    contact_record = next((r for r in ok_pages
+                           if "contact" in urlparse(r["url"]).path), None)
+    if contact_record:
+        if contact_record["mailto"]:
+            info("Contact page lists an email address.")
+        else:
+            info("Contact page shows no email link. A form alone is fine, but an email address adds trust.")
+    comment_pages = [r for r in ok_pages if r["comment_markers"]]
+    if comment_pages:
+        info(f"{len(comment_pages)} pages show comment form markers (reader engagement signal).")
+    related_pages = [r for r in ok_pages if r["related_markers"]]
+    if related_pages:
+        info(f"{len(related_pages)} pages show related-content markers (internal linking signal).")
+    nofollow_total = sum(r["nofollow"] for r in ok_pages)
+    if nofollow_total:
+        info(f"{nofollow_total} links carry rel=nofollow.")
+    updated_pages = [r for r in ok_pages if r["updated_signal"]]
+    if updated_pages:
+        info(f"{len(updated_pages)} pages show updated or modified markers (freshness signal).")
+    out_counts = [len(v) for v in outlink_map.values()]
+    if out_counts:
+        info(f"Pages link out to {sum(out_counts) / len(out_counts):.0f} internal URLs on average (lowest {min(out_counts)}).")
+
     # Near-duplicate content on article text
     print()
     print("Near-duplicate check (article text, shingle similarity):")
@@ -1142,7 +1235,7 @@ def main():
     ext_unverified = []
     for link in ext_to_check:
         time.sleep(args.delay)
-        status, error = head_or_get(link, args.timeout)
+        status, error, _ = head_or_get(link, args.timeout)
         if status is not None and 200 <= status < 400:
             continue
         if status in (401, 403, 429) or status is None:
@@ -1164,9 +1257,12 @@ def main():
     print(f"Verifying {len(imgs_to_check)} unique same-origin images (cap {args.max_images}).")
     broken_imgs = []
     unverified_imgs = []
+    big_imgs = []
     for link in imgs_to_check:
         time.sleep(args.delay)
-        status, error = head_or_get(link, args.timeout)
+        status, error, size = head_or_get(link, args.timeout)
+        if status is not None and 200 <= status < 400 and size > 1_000_000:
+            big_imgs.append((link, size))
         if status is None:
             # No HTTP response at all: a flaky host looks the
             # same as a dead image from here, so report it as
@@ -1182,6 +1278,10 @@ def main():
         report("ok", "Every verified image loads.")
     if unverified_imgs:
         info(f"{len(unverified_imgs)} {'image' if len(unverified_imgs) == 1 else 'images'} could not be verified (no HTTP response; recheck in a browser before treating them as broken).")
+    if big_imgs:
+        report("warn", f"{len(big_imgs)} {'image is' if len(big_imgs) == 1 else 'images are'} over 1 MB. Heavy images slow pages for readers and reviewers.")
+        for link, size in big_imgs[:10]:
+            print(f"      {size // 1024} KB: {link}")
 
     # ---- Score and verdict ----
     print()
@@ -1236,6 +1336,13 @@ def main():
                 "has_footer": record.get("has_footer", False),
                 "has_search": record.get("has_search", False),
                 "sponsored_links": record.get("sponsored", 0),
+                "mailto_links": record.get("mailto", 0),
+                "comment_markers": record.get("comment_markers", 0),
+                "related_markers": record.get("related_markers", 0),
+                "nofollow_links": record.get("nofollow", 0),
+                "updated_signal": record.get("updated_signal", False),
+                "site_verification": record.get("site_verification", False),
+                "favicon": record.get("favicon", False),
                 "flags": record.get("flags", []),
             })
         payload = {
@@ -1255,6 +1362,7 @@ def main():
             "images_verified": len(imgs_to_check),
             "images_broken": [link for link, _ in broken_imgs],
             "images_unverified": [link for link, _ in unverified_imgs],
+            "images_over_1mb": [link for link, _ in big_imgs],
             "near_duplicate_pairs": [
                 {"similarity": round(sim, 2), "left": left, "right": right}
                 for sim, left, right in dup_pairs
