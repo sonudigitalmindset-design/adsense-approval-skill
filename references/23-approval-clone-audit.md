@@ -55,7 +55,14 @@ Every crawled page:
 - Images without alt text, counted per page, and images
   without width and height attributes counted.
 - Canonical tag present and self-referencing.
-- Meta robots flags such as noindex.
+- Meta robots flags such as noindex, and the X-Robots-Tag
+  response header checked for noindex on every page, since a
+  header noindex is invisible in the page HTML.
+- Affiliate links counted, with disclosure wording and
+  sponsored or nofollow qualification checked as practice
+  heuristics, not as Google rules.
+- Internal outlink count recorded, so pages that link to no
+  other internal page can be flagged as navigation dead ends.
 - Viewport tag for mobile layout, HTML lang attribute, and
   charset meta.
 - Open Graph title, description, and image, and Twitter card.
@@ -183,6 +190,18 @@ It identifies itself in the user agent string.
   three-ads-per-page limit was removed in 2016, reported.
 - Homepage slow flag over 3 seconds: a user experience
   heuristic, not a Google rule.
+- Affiliate disclosure flag: a page with affiliate links and
+  no disclosure wording is a practice heuristic, not a Google
+  rule. Disclosure rules come from regulators and affiliate
+  programs, not from AdSense. See
+  `references/36-affiliate-content-and-disclosure.md`.
+- Affiliate qualification flag: a page with affiliate links
+  and no sponsored or nofollow links at all is flagged for
+  manual review. Google accepts either qualification, so the
+  flag only fires when neither is present.
+- Navigation dead end: a page with no internal outlinks is a
+  navigation-signal heuristic, not a Google rule. Archives
+  and landing pages may be dead ends on purpose.
 - Readiness score, 100 minus 8 per failure and 2 per warning:
   a work-remaining rank, not a Google score, and it predicts
   nothing about approval.

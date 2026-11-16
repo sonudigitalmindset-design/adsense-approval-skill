@@ -78,6 +78,19 @@ an editorial habit, not a requirement.
    page with the code. This usually takes a few days, but in some cases
    takes 2 to 4 weeks. Check status on the Sites page.
 
+Two official setup facts, read on the live AdSense Help page
+"Complete your AdSense account setup" on 17 November 2026:
+
+- The site must be live and contain enough content for Google's
+  specialists to evaluate. If the site is under construction,
+  does not load, or is difficult to navigate, Google cannot set
+  up the account.
+- There are 6 months to complete the account setup steps. If the
+  account is not set up after 6 months, the account is
+  deactivated. This is a setup deadline, not a domain age rule.
+  It says nothing about how old the domain must be before
+  applying.
+
 ## Site statuses to recognise
 
 - **Getting ready:** setup tasks are incomplete. Finish them before

@@ -1,5 +1,61 @@
 # Changelog
 
+## 1.8.0 — 17 November 2026
+
+- New `references/34-supported-languages.md`: the full
+  official supported language list read live on the
+  AdSense Help page on 17 November 2026, with the
+  interface footnotes, the rule against ad code on pages
+  primarily in an unsupported language, and practice
+  guidance for multilingual and Roman-script content.
+- New `references/35-page-experience-and-core-web-vitals.md`:
+  Core Web Vitals definitions, thresholds, and the 75th
+  percentile field method, the six page experience
+  questions, and an explicit boundary that these are
+  Search signals, not AdSense approval rules.
+- New `references/36-affiliate-content-and-disclosure.md`:
+  the official thin affiliation definition, link
+  qualification with rel=sponsored and rel=nofollow,
+  regulator disclosure rules kept separate from Google
+  rules, and a fix checklist.
+- Identity verification upgraded from reported to
+  official in `references/01-history-timeline.md` and
+  `references/16-verification-and-payments-troubleshooting.md`:
+  the 45-day window, the ID plus video selfie process,
+  the 5 to 10 minute duration, the biometric opt-out
+  with 2 to 3 business day manual review, document and
+  selfie tips, and re-reviews, all read on the live
+  AdSense Help page on 17 November 2026.
+- `references/02-eligibility-and-application.md` gains
+  the official 6-month account setup deadline and the
+  live site with enough content requirement, read on the
+  live AdSense Help page on 17 November 2026.
+- `references/11-official-sources.md` gains nine new
+  official pages: languages, unsupported languages,
+  account setup, online identity verification, spam
+  policies, outbound link qualification, page
+  experience, Core Web Vitals, and web.dev Web Vitals.
+- `scripts/deep_audit.py` gains three checks. The
+  X-Robots-Tag response header is checked for noindex
+  on the homepage and every crawled page, since a header
+  noindex is invisible in the page HTML. Affiliate links
+  are counted and cross-checked against disclosure
+  wording and sponsored or nofollow qualification, as
+  practice heuristics. Pages with no internal outlinks
+  are flagged as navigation dead ends. The JSON output
+  gains x_robots_tag, affiliate_links, and
+  internal_outlinks fields.
+- `scripts/deep_audit.py` also fixes a crash on sitemaps with
+  date-only lastmod values. Such values are valid sitemaps,
+  but the freshness math mixed timezone-aware and naive
+  datetimes and raised a TypeError. Date-only values are
+  now treated as UTC.
+- `references/23-approval-clone-audit.md` and
+  `references/31-approval-check-matrix.md` document the
+  three new checks and their heuristic status.
+  `docs/contents.md` and `docs/installation.md` updated
+  for 36 reference files.
+
 ## 1.7.1 — 17 November 2026
 
 - `scripts/deep_audit.py` now prints progress to stderr

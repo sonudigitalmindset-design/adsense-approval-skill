@@ -74,6 +74,10 @@ Per page, for every sitemap URL:
 - Canonical link present and pointing at the same page,
   with URL encoding differences ignored.
 - Meta robots noindex flagged.
+- X-Robots-Tag response header checked for noindex on
+  every page. A header noindex hides the page from
+  review just like a meta tag, and it is invisible in
+  the page HTML.
 - Viewport meta, HTML lang attribute, and charset meta
   present.
 - Open Graph title, description, and image present, and
@@ -143,6 +147,19 @@ judge them.
 - Whether the Privacy disclosure wording is accurate for
   the site's actual data handling. Keyword presence is
   not legal accuracy.
+- Whether affiliate disclosure wording is visible to a
+  reader. The script finds the words. Only a human can
+  judge whether the disclosure sits near the top of the
+  page or is buried where nobody reads it.
+- Whether affiliate links are qualified with sponsored
+  or nofollow. The script flags pages with neither.
+  A human confirms each paid link carries the right
+  value.
+- Whether a navigation dead end page is a real problem.
+  The script flags pages with no internal outlinks. A
+  landing page may be a dead end on purpose. A post
+  with no related links is a missed chance for readers
+  and crawlers.
 - Whether the consent banner actually renders and works
   for a new visitor. A marker in HTML is not a working
   banner.

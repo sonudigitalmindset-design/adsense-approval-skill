@@ -86,6 +86,12 @@ fits your situation.
   confirmed, suggested, and hidden review layers.
 - [`33-unpublished-review-signals.md`](../references/33-unpublished-review-signals.md):
   inferred reviewer signals, each labelled.
+- [`34-supported-languages.md`](../references/34-supported-languages.md):
+  the official supported language list and its footnotes.
+- [`35-page-experience-and-core-web-vitals.md`](../references/35-page-experience-and-core-web-vitals.md):
+  Core Web Vitals thresholds and the page experience questions.
+- [`36-affiliate-content-and-disclosure.md`](../references/36-affiliate-content-and-disclosure.md):
+  thin affiliation, link qualification, and disclosure.
 
 ## References: advanced
 

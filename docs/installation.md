@@ -51,7 +51,7 @@ invents a minimum, the skill is not loaded.
 
 You can also check the files directly. A correct install
 contains `SKILL.md`, `skill.yaml`, a `references/` folder with
-33 files, a `scripts/` folder with two Python scripts, and an
+36 files, a `scripts/` folder with two Python scripts, and an
 `examples/` folder with five templates. See the full list in
 [Contents](contents.md).
 

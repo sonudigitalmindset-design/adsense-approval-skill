@@ -109,10 +109,16 @@
   bargain: original content that serves readers, genuine user interest
   behind every click and impression, and honest disclosure about data
   use.
-- **Unverified recent claims:** some blogs report a new government
-  photo-ID or video-selfie step from June 2026. Treat this as
-  unverified until you see it in the AdSense account or on a live
-  official Help page. Do not teach it as a universal rule.
+- **June 2026, identity verification before ads (OFFICIAL):** from
+  June 2026, publishers may need to verify their identity before
+  the account can start showing ads, by submitting a
+  government-issued photo ID and, depending on location, taking
+  a video selfie. The window is 45 days from the first request,
+  after which Google stops showing ads or pauses activation.
+  Verified on two live AdSense Help pages on 17 November 2026:
+  "Complete your AdSense account setup" and "Verify your
+  identity using online verification". Full process details are
+  in `references/16-verification-and-payments-troubleshooting.md`.
 
 ## The through-line for learners
 

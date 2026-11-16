@@ -142,6 +142,27 @@ POPUP_KEYWORDS = (
     "newsletter-popup", "leadbox", "optin-modal",
 )
 
+# Domain markers for affiliate networks and large affiliate programs.
+# A match means the page links out through an affiliate channel, not
+# that the link is paid. The disclosure check below is a practice
+# heuristic, never a Google rule. Editorial links to ordinary shops
+# are deliberately not in this list.
+AFFILIATE_DOMAINS = (
+    "amazon.", "amzn.to", "flipkart.",
+    "impact.com", "shareasale", "cj.com", "awin.com",
+    "clickbank", "digistore24", "jvzoo", "skimlinks",
+    "partnerize", "tradedoubler",
+)
+
+# Wording that tells a reader the page may earn from its links.
+# Any one phrase counts as a disclosure signal. A human must still
+# judge whether the disclosure is visible, not buried.
+DISCLOSURE_PHRASES = (
+    "affiliate", "commission", "we may earn", "paid link",
+    "sponsored link", "amazon associate", "affiliate disclosure",
+    "earn a commission", "at no extra cost",
+)
+
 SITEMAP_LASTMODS = []
 SITEMAP_ERRORS = []
 
@@ -289,8 +310,8 @@ def _fetch_page(job):
     """Fetch one sitemap page. Runs inside the worker pool."""
     page_url, timeout, delay = job
     time.sleep(delay)
-    status, final_url, body, error, _, _ = fetch(page_url, timeout)
-    return status, final_url, body, error
+    status, final_url, body, error, headers, _ = fetch(page_url, timeout)
+    return status, final_url, body, error, headers
 
 
 def _fetch_status(job):
@@ -601,6 +622,8 @@ def main():
         info("X-Content-Type-Options header present.")
     else:
         info("No X-Content-Type-Options header (optional hardening).")
+    if "noindex" in home_headers.get("x-robots-tag", "").lower():
+        report("fail", "Homepage carries noindex through the X-Robots-Tag header. A noindexed homepage cannot be reviewed or ranked. Remove it before applying.")
 
     # Fetch the independent site-level URLs in parallel, then
     # report them in order below so the output stays stable.
@@ -840,9 +863,14 @@ def main():
         parsed_dates = []
         for raw in SITEMAP_LASTMODS:
             try:
-                parsed_dates.append(datetime.datetime.fromisoformat(raw.replace("Z", "+00:00")))
+                parsed = datetime.datetime.fromisoformat(raw.replace("Z", "+00:00"))
             except ValueError:
-                pass
+                continue
+            if parsed.tzinfo is None:
+                # Date-only lastmod values are valid sitemaps. Treat
+                # them as UTC so the age math below never crashes.
+                parsed = parsed.replace(tzinfo=datetime.timezone.utc)
+            parsed_dates.append(parsed)
         if parsed_dates:
             newest = max(parsed_dates)
             age_days = (datetime.datetime.now(datetime.timezone.utc) - newest).days
@@ -900,7 +928,7 @@ def main():
             fetched.append(result)
             if i % 10 == 0 or i == len(pages):
                 _progress(i, len(pages), "pages fetched")
-    for page_url, (status, final_url, body, error) in zip(pages, fetched):
+    for page_url, (status, final_url, body, error, headers) in zip(pages, fetched):
         record = {"url": page_url, "status": status, "final": final_url, "flags": []}
         if status != 200 or not body:
             record["flags"].append(f"HTTP {error or status}")
@@ -931,6 +959,7 @@ def main():
         record["images_no_dims"] = sum(1 for _, _, dims in parser_html.images if not dims)
         record["canonical"] = parser_html.canonical
         record["robots_meta"] = parser_html.metas.get("robots", "")
+        record["x_robots"] = headers.get("x-robots-tag", "")
         record["viewport"] = "viewport" in parser_html.metas
         record["og_title"] = parser_html.metas.get("og:title", "")
         record["og_description"] = parser_html.metas.get("og:description", "")
@@ -959,6 +988,7 @@ def main():
         record["site_verification"] = "google-site-verification" in parser_html.metas
         record["mixed"] = len(re.findall(r'''(?:src|href)="http://''', body))
         record["trust_links"] = 0
+        record["affiliate_links"] = 0
         outlink_map[page_url] = set()
         for href in parser_html.links:
             clean = clean_link(href, page_url)
@@ -976,6 +1006,9 @@ def main():
                     outlink_map[page_url].add(clean)
             else:
                 external_links.add(clean)
+                host = urlparse(clean).netloc.lower()
+                if any(marker in host for marker in AFFILIATE_DOMAINS):
+                    record["affiliate_links"] += 1
         for src, _, _ in parser_html.images:
             clean = clean_link(src, page_url)
             if clean and same_origin(clean, netloc):
@@ -1013,6 +1046,8 @@ def main():
             flags.append(f"{record['images_no_alt']} images without alt")
         if "noindex" in record["robots_meta"].lower():
             flags.append("noindex")
+        if "noindex" in record["x_robots"].lower():
+            flags.append("X-Robots-Tag noindex header")
         if not record["viewport"]:
             flags.append("no viewport")
         if not record["html_lang"]:
@@ -1045,6 +1080,11 @@ def main():
             final_path = urllib.parse.unquote(urlparse(final_url).path).rstrip("/")
             if canon_path != final_path:
                 flags.append("canonical points elsewhere")
+        if record["affiliate_links"]:
+            if not any(p in record["lowered"] for p in DISCLOSURE_PHRASES):
+                flags.append("affiliate links without disclosure wording (review manually)")
+            if record["sponsored"] == 0 and record["nofollow"] == 0:
+                flags.append("affiliate links with no sponsored or nofollow qualification (review manually)")
         flag_text = ("; ".join(flags)) if flags else "clean"
         mark = "FAIL" if any(f in flag_text for f in ("no title", "no H1", "thin (", "placeholder")) else ("WARN" if flags else "OK")
         print(f"[{mark}] {page_url} | {record['words']} words | article {record['article_words']} | H1:{record['h1']} | alt-missing:{record['images_no_alt']} | {flag_text}")
@@ -1121,6 +1161,22 @@ def main():
         report("warn", f"{len(noindex_pages)} crawled pages carry noindex.")
         for r in noindex_pages[:20]:
             print(f"      {r['url']}")
+
+    header_noindex = [r for r in ok_pages if "noindex" in r.get("x_robots", "").lower()]
+    if header_noindex:
+        report("warn", f"{len(header_noindex)} crawled pages carry noindex through the X-Robots-Tag header. A header noindex hides the page from review just like a meta tag, and it is invisible in the page HTML.")
+        for r in header_noindex[:20]:
+            print(f"      {r['url']}")
+
+    aff_pages = [r for r in ok_pages if r.get("affiliate_links")]
+    aff_nodisclosure = [r for r in aff_pages
+                        if not any(p in r["lowered"] for p in DISCLOSURE_PHRASES)]
+    if aff_nodisclosure:
+        report("warn", f"{len(aff_nodisclosure)} pages carry affiliate links with no disclosure wording. Practice heuristic, not a Google rule. A short visible disclosure near the top of the page is the honest fix. See references/36-affiliate-content-and-disclosure.md.")
+        for r in aff_nodisclosure[:10]:
+            print(f"      {r['url']}")
+    elif aff_pages:
+        info(f"{len(aff_pages)} pages carry affiliate links and disclosure wording was found on each. Read one to confirm the disclosure is visible, not buried.")
 
     no_lang = [r for r in ok_pages if not r["html_lang"]]
     if no_lang:
@@ -1276,6 +1332,12 @@ def main():
     out_counts = [len(v) for v in outlink_map.values()]
     if out_counts:
         info(f"Pages link out to {sum(out_counts) / len(out_counts):.0f} internal URLs on average (lowest {min(out_counts)}).")
+    ok_urls = {r["url"] for r in ok_pages}
+    dead_ends = sorted(u for u in ok_urls if not outlink_map.get(u))
+    if dead_ends:
+        report("warn", f"{len(dead_ends)} crawled pages link to no other internal page (navigation dead end). Readers and crawlers reach a dead end. Add related links, breadcrumb links, or menu links.")
+        for u in dead_ends[:10]:
+            print(f"      {u}")
 
     # Near-duplicate content on article text
     print()
@@ -1430,6 +1492,9 @@ def main():
                 "images_no_alt": record.get("images_no_alt", 0),
                 "canonical": record.get("canonical", ""),
                 "robots_meta": record.get("robots_meta", ""),
+                "x_robots_tag": record.get("x_robots", ""),
+                "affiliate_links": record.get("affiliate_links", 0),
+                "internal_outlinks": len(outlink_map.get(record["url"], ())),
                 "viewport": record.get("viewport", False),
                 "og_image": record.get("og_image", ""),
                 "html_lang": record.get("html_lang", ""),

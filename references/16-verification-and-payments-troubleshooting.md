@@ -24,33 +24,71 @@ hard or impossible to change after verification succeeds.
 
 ## Identity verification
 
-- Google asks for identity verification when the account reaches
-  the verification threshold. The request appears in the account
-  under Payments and Verification.
-- The deadline shown in the account is the real deadline. It is
-  commonly reported as 45 days from the first request. After the
-  deadline, ad serving stops until verification passes.
-- Upload a government-issued photo ID from the country in the
-  payments profile. An ID from another country fails even when the
-  name matches, and the payment country cannot be changed.
-- Photo quality decides many outcomes. Shoot in flat, even light
-  with no glare, flash, or shadow across the text. Keep all four
-  corners visible, keep the text sharp, and check expiry before
-  uploading.
-- Attempts are limited. Do not resubmit the same failing document.
-  Fix the cause first, then submit once with a clean document.
-- Do not upload anything that is not an ID. Bank statements and
-  screenshots are not identity documents and can create new
-  problems.
-- If attempts run out, Google points to the Identity verification
-  troubleshooter and then a contact form. Follow that path instead
-  of creating a new account.
-- Common rejection causes: name mismatch, wrong document country,
-  glare or blur, expired document, cropped or cut-off document,
-  and a document type Google does not accept for that country.
-- In some countries, passing online identity verification removes
-  the separate address verification step. The account shows which
-  steps remain.
+Status: OFFICIAL. The process below was read on the live
+AdSense Help page "Verify your identity using online
+verification" on 17 November 2026:
+https://support.google.com/adsense/answer/16354192?hl=en
+The identity section of this file no longer relies on
+secondary reports. The rest of the file keeps its
+October 2026 labels.
+
+- Google asks for identity verification when the account
+  reaches the verification threshold. The request appears
+  in the account under Payments and Verification. From
+  June 2026, identity verification may also be required
+  before the account can start showing ads at all.
+- The deadline is 45 days from the date Google first asks
+  for verification. After 45 days without completion,
+  Google stops showing ads on the pages. For a new
+  account, activation pauses instead.
+- Online verification is only available in certain
+  locations. Where it is available, the process takes
+  5 to 10 minutes and has two parts: an image of a
+  current government-issued photo ID, and a video selfie
+  for a face match.
+- Supported document types are a passport, a driver's
+  license, and a national identity card. The document
+  must come from the country in the payments profile.
+  An ID from another country fails even when the name
+  matches, and the payment country cannot be changed.
+- Document photo tips from the official page: use the
+  same full name in all documents, use a current
+  document that is not expired, show the entire
+  document with the photo readable and in focus, and
+  keep the photo free of reflections and glare.
+  Incomplete, obstructed, dark, or blurry photos are
+  not accepted.
+- Video selfie tips from the official page: keep the
+  face visible and centered, be the only person in the
+  video, keep the camera at a reasonable distance, and
+  turn the head slowly and fully when prompted.
+- Do not upload anything that is not an ID. The official
+  page warns that uploading documents or photos other
+  than the ID may result in account suspension. Bank
+  statements and screenshots are not identity documents.
+- Publishers can opt out of the biometric face match.
+  Opting out sends the documents to a manual review
+  that takes 2 to 3 business days.
+- Attempts are limited. A retry is allowed when the
+  documents were blurry or unreadable. Do not resubmit
+  the same failing document. Fix the cause first, then
+  submit once with a clean document.
+- If attempts run out, Google points to the Identity
+  verification troubleshooter and then a contact form.
+  Follow that path instead of creating a new account.
+- Common rejection causes: name mismatch, wrong
+  document country, glare or blur, expired document,
+  cropped or cut-off document, and a document type
+  Google does not accept for that country.
+- Google may periodically re-review previously approved
+  accounts or re-evaluate verification status based on
+  new risk and safety signals, such as a connection to
+  a terminated account. If an account fails identity
+  verification on re-review, ads stop showing and
+  earnings are placed on hold.
+- In some countries, passing online identity
+  verification removes the separate address verification
+  step. The account shows which steps remain.
 
 ## Address verification and the PIN
 

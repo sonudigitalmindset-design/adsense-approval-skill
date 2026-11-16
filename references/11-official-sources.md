@@ -21,6 +21,32 @@ web search results or are the well-known AdSense Help entry points.
   https://support.google.com/adsense/answer/7584263?hl=en-GB
 - AdSense Program policies:
   https://support.google.com/adsense/answer/48182?hl=en
+- Languages Google publisher products support (full supported
+  list, read live 17 November 2026):
+  https://support.google.com/adsense/answer/9727
+- Unsupported languages (Publisher Policies Help):
+  https://support.google.com/publisherpolicies/answer/10436912?hl=en
+- Complete your AdSense account setup (6-month setup deadline,
+  live site and enough content, read live 17 November 2026):
+  https://support.google.com/adsense/answer/7402256
+- Verify your identity using online verification (45-day window,
+  ID plus video selfie, read live 17 November 2026):
+  https://support.google.com/adsense/answer/16354192?hl=en
+- Spam Policies for Google Web Search (thin affiliation, link
+  spam, scaled content abuse, read live 17 November 2026):
+  https://developers.google.com/search/docs/essentials/spam-policies
+- Qualify your outbound links (sponsored, ugc, nofollow, read
+  live 17 November 2026):
+  https://developers.google.com/search/docs/crawling-indexing/qualify-outbound-links
+- Understanding page experience (Search Central, read live
+  17 November 2026):
+  https://developers.google.com/search/docs/appearance/page-experience
+- Understanding Core Web Vitals and Google search results
+  (Search Central, read live 17 November 2026):
+  https://developers.google.com/search/docs/appearance/core-web-vitals
+- Web Vitals (web.dev, thresholds and 75th percentile method,
+  read live 17 November 2026):
+  https://web.dev/articles/vitals
 - Google Publisher Policies:
   https://support.google.com/admob/answer/10502938?hl=en
   (Google is migrating these to a new Publisher Policies Help Center;
