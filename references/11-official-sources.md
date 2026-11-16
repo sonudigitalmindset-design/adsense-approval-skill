@@ -43,6 +43,16 @@ web search results or are the well-known AdSense Help entry points.
 - Invalid traffic appeal form (linked from the AdSense Help page on
   accounts disabled for invalid traffic):
   https://support.google.com/adsense/contact/appeal_form_adsense_admob?hl=en
+- Ad serving limits (two causes, typical duration, automatic
+  review):
+  https://support.google.com/adsense/answer/9437976?hl=en
+- Limited ad serving vs. limited ads:
+  https://support.google.com/adsense/answer/14668281?hl=en
+- Troubleshoot ad coverage issues:
+  https://support.google.com/adsense/answer/16906718?hl=en
+- Ad placement policies (including the auto-refreshing ads
+  rule):
+  https://support.google.com/adsense/answer/1346295?hl=en
 - Funding Choices and certified CMP requirements: open from the live
   AdSense Help Center under Privacy and messaging, and read the EU
   User Consent Policy page linked from there. Do not rely on a

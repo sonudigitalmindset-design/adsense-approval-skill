@@ -109,6 +109,24 @@ description: Teach and apply Google AdSense approval rules from 2003 to today, a
 
 - Teach the whole journey from `references/22-learning-paths.md`. Match the level to the user, from complete beginner to advanced multi-product work, and use the checks at each level before moving on.
 
+## Handle advanced account situations
+
+- Answer ad serving limit questions from `references/24-ad-serving-limits-and-enforcement-levels.md`. State the two causes, the typical less than 30 days figure with its may take longer caveat, and the automatic review. Never promise a lift date or a manual shortcut. Use `examples/ad-serving-limit-action-plan.md` as the dated log structure.
+
+- Defend against invalid traffic from `references/25-invalid-traffic-defense.md`. Audit every named source, watch behaviour weekly, keep placements honest, and document everything with dates. The publisher stays responsible for traffic even when a third party caused it.
+
+- Advise on reporting and tests from `references/26-advanced-reporting-and-experiments.md`. Segment by page, country, and device before concluding anything, test one variable at a time, and treat blocking controls as brand safety tools. Never quote a third-party RPM benchmark as a fact.
+
+- Answer account structure questions from `references/27-account-architecture-and-graduation.md`. One account per payee, payee country and account type locked after activation, no account transfers, and graduation to Ad Manager or MCM only when size and deals demand it. Verify MCM and Ad Manager details on the live Google pages before acting.
+
+- Answer payment, tax, and edge case questions from `references/28-payments-tax-and-edge-cases.md`. List holds by name before diagnosing a late payment, keep tax information current, and label secondary figures as reported. This skill is not tax advice.
+
+- Answer technical questions from `references/29-advanced-technical-implementation.md`. Copy the ads.txt line from the account, never modify ad code, never refresh ads, keep one CMP loading before ad requests, and keep crawler access open.
+
+- Work any hard situation from `references/30-advanced-decision-playbooks.md`. Follow the playbook's checks, actions, and stop rule in order, and keep the log that the playbook asks for.
+
+- Run the monthly review from `examples/advanced-monthly-review-checklist.md` for an approved account: Policy Center first, then segmented reports, traffic, blocking controls, technical checks, content, experiments, and payments.
+
 ## Teach the history and the terms
 
 - Teach from `references/01-history-timeline.md` for the story from the March 2003 precursor and the 18 June 2003 launch to the 2024 move to per impression payment and the present day.

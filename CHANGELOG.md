@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.3.0 — 17 November 2026
+
+- Seven new advanced reference files: ad serving limits and
+  enforcement levels (verified against the live AdSense Help
+  page, including the two causes, the typical less than 30
+  days figure, and automatic review), invalid traffic
+  defense (source audit, early warning signals, click
+  bombing response), advanced reporting and experiments
+  (segmentation method, experiments workflow, blocking
+  controls, Auto ads controls, and a labelled report of a
+  begin-to-render impression counting change), account
+  architecture and graduation (one account per payee,
+  locked country and account type, multi-site rules, Ad
+  Manager and MCM delegation types), payments tax and edge
+  cases (holds one by one, tax forms and withholding,
+  final payment rules, country moves, deceased payee),
+  advanced technical implementation (ads.txt at scale,
+  sellers.json, consent debugging, page experience, the
+  refresh ban, single-page apps, AMP, crawler access), and
+  advanced decision playbooks (ten hard situations with
+  checks, actions, and stop rules).
+- Two new examples: a dated ad serving limit action plan
+  log, and an advanced monthly review checklist.
+- `SKILL.md` gains an advanced account situations workflow
+  covering all seven new references and both new examples.
+- `references/11-official-sources.md` gains the ad serving
+  limits page, the limited ad serving vs limited ads page,
+  the ad coverage troubleshooting page, and the ad
+  placement policies page.
+- Secondary figures in the new references (MCM thresholds,
+  final payment timing, withholding rates, Ad Manager
+  Small Business qualification) are labelled reported, with
+  the live pages and the account's own figures stated as
+  the authority.
+
 ## 1.2.0 — 17 November 2026
 
 - New `scripts/deep_audit.py`: an approval-clone crawler that

@@ -42,11 +42,20 @@ points at the live official pages as the source of truth.
 | `references/21-traffic-and-seo-basics.md` | Legitimate traffic, Search Console, and durable growth |
 | `references/22-learning-paths.md` | Zero-to-advanced reading paths with checks, plus FAQ |
 | `references/23-approval-clone-audit.md` | Deep crawl method: every checkable review point, and its limits |
+| `references/24-ad-serving-limits-and-enforcement-levels.md` | Ad serving limits, limited ads, and the enforcement ladder |
+| `references/25-invalid-traffic-defense.md` | Invalid traffic sources, prevention, signals, and response |
+| `references/26-advanced-reporting-and-experiments.md` | Segmentation, experiments, blocking controls, Auto ads controls |
+| `references/27-account-architecture-and-graduation.md` | One account rule, locked fields, multi-site, Ad Manager, MCM |
+| `references/28-payments-tax-and-edge-cases.md` | Holds, tax forms, final payments, country moves, edge cases |
+| `references/29-advanced-technical-implementation.md` | ads.txt at scale, sellers.json, consent debugging, refresh ban |
+| `references/30-advanced-decision-playbooks.md` | Ten hard situations with checks, actions, and stop rules |
 | `scripts/site_audit.py` | Read-only readiness checker (Python standard library only) |
 | `scripts/deep_audit.py` | Deep approval-clone crawler: every page, every small point |
 | `examples/audit-report-template.md` | Report template for one site audit |
 | `examples/privacy-policy-outline.md` | Privacy Policy structure to adapt, with ad disclosure |
 | `examples/policy-appeal-outline.md` | Fact-based appeal structure for invalid traffic cases |
+| `examples/ad-serving-limit-action-plan.md` | Dated log and action plan for an ad serving limit |
+| `examples/advanced-monthly-review-checklist.md` | Monthly review for an approved account |
 
 ## Install
 
