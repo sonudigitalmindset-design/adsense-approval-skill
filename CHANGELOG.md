@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.6.0 — 17 November 2026
+
+- New `docs/` guides, each a separate page linked from
+  the README: installation, understanding, usage,
+  audit scripts, FAQ, contents, and contributing.
+- README rewritten as a clean landing page: animated
+  banner, animated workflow diagram, animated terminal
+  preview, badges, and links to every guide. The full
+  file table moved to `docs/contents.md`.
+- New `assets/` animated SVG images: banner, workflow,
+  and terminal preview. CSS keyframe animation, no
+  JavaScript, no external services.
+
 ## 1.5.0 — 17 November 2026
 
 - New `references/33-unpublished-review-signals.md`:

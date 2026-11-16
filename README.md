@@ -1,178 +1,102 @@
-# AdSense Approval Mastery
+![AdSense Approval Mastery](assets/banner.svg)
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange" alt="License: MIT"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.6.0-orange" alt="Version 1.6.0"></a>
+  <img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/references-33-green" alt="33 reference files">
+  <img src="https://img.shields.io/badge/verified-17%20Nov%202026-green" alt="Verified against live official pages: 17 November 2026">
+</p>
 
 A skill that teaches Google AdSense approval end to end: the full
 history from the 2003 launch to today, the current eligibility rules,
 every policy layer, the mistakes that get sites rejected, and the
 habits that keep an approved account safe.
 
-It is built for AI assistants (Muse, Claude Code, Cursor, and other
-Agent Skills compatible tools) and for humans who want one honest,
+Built for AI assistants (Muse, Claude Code, Cursor, and other Agent
+Skills compatible tools) and for humans who want one honest,
 well-sourced place to learn AdSense approval.
 
-**No approval is promised.** Google decides every application. This
-skill separates official rules from community practice and myths, and
-points at the live official pages as the source of truth.
+> **No approval is promised.** Google decides every application. This
+> skill separates official rules from community practice and myths,
+> and points at the live official pages as the source of truth.
 
-## What is inside
+## Start here
 
-| File | What it covers |
-|---|---|
-| `SKILL.md` | The skill itself: how to audit, apply, fix rejections, and stay compliant |
-| `skill.yaml` | Muse skill descriptor (name, title, description, category) |
-| `references/01-history-timeline.md` | AdSense history, 2003 to today, with confirmed vs reported dates |
-| `references/02-eligibility-and-application.md` | The 4 official eligibility checks, myths, and application steps |
-| `references/03-publisher-policies.md` | Prohibited content and behaviour (no ads) |
-| `references/04-publisher-restrictions.md` | Restricted content (fewer ads) |
-| `references/05-program-policies-ads-traffic.md` | Invalid traffic, click encouragement, traffic sources, placement, privacy |
-| `references/06-terms-and-payments.md` | Terms, revenue share history, verification, holds, terminations |
-| `references/07-rejection-reasons-and-fixes.md` | Every common rejection reason and its fix plan |
-| `references/08-pre-apply-checklist.md` | Tick-box checklist to run before every application |
-| `references/09-content-quality-guide.md` | Originality, AI content, copyright, YMYL, trust signals |
-| `references/10-glossary.md` | Plain-language definitions with examples |
-| `references/11-official-sources.md` | Every official link, with a 2-minute verification habit |
-| `references/12-mistakes-encyclopedia.md` | 52 mistakes that get sites rejected or accounts closed |
-| `references/13-ad-formats-and-placement.md` | Auto ads, ad units, and placement rules for every format |
-| `references/14-optimization-and-revenue.md` | Metrics, experiments, blocking controls, and honest earnings levers |
-| `references/15-policy-center-and-appeals.md` | Enforcement levels, fix workflow, and the invalid traffic appeal |
-| `references/16-verification-and-payments-troubleshooting.md` | Identity, PIN, payment methods, tax info, and holds |
-| `references/17-youtube-and-other-products.md` | YPP, AdSense for Search, AdMob, and Ad Manager |
-| `references/18-consent-and-privacy-deep-dive.md` | Certified CMP, Funding Choices, TCF, Consent Mode, disclosures |
-| `references/19-platform-setup-guides.md` | WordPress, Blogger, static sites, builders, ads.txt, sellers.json |
-| `references/20-troubleshooting-index.md` | 25 symptoms with likely cause and first check |
-| `references/21-traffic-and-seo-basics.md` | Legitimate traffic, Search Console, and durable growth |
-| `references/22-learning-paths.md` | Zero-to-advanced reading paths with checks, plus FAQ |
-| `references/23-approval-clone-audit.md` | Deep crawl method: every checkable review point, and its limits |
-| `references/24-ad-serving-limits-and-enforcement-levels.md` | Ad serving limits, limited ads, and the enforcement ladder |
-| `references/25-invalid-traffic-defense.md` | Invalid traffic sources, prevention, signals, and response |
-| `references/26-advanced-reporting-and-experiments.md` | Segmentation, experiments, blocking controls, Auto ads controls |
-| `references/27-account-architecture-and-graduation.md` | One account rule, locked fields, multi-site, Ad Manager, MCM |
-| `references/28-payments-tax-and-edge-cases.md` | Holds, tax forms, final payments, country moves, edge cases |
-| `references/29-advanced-technical-implementation.md` | ads.txt at scale, sellers.json, consent debugging, refresh ban |
-| `references/30-advanced-decision-playbooks.md` | Ten hard situations with checks, actions, and stop rules |
-| `references/31-approval-check-matrix.md` | Every approval check: automated, human-decided, and uncheckable |
-| `references/32-hidden-deep-approval-checks.md` | Confirmed, suggested, and hidden review layers, with the deep checks |
-| `references/33-unpublished-review-signals.md` | Inferred reviewer signals, each labelled, never taught as rules |
-| `scripts/site_audit.py` | Read-only readiness checker (Python standard library only) |
-| `scripts/deep_audit.py` | Deep approval-clone crawler: every page, every small point |
-| `examples/audit-report-template.md` | Report template for one site audit |
-| `examples/privacy-policy-outline.md` | Privacy Policy structure to adapt, with ad disclosure |
-| `examples/policy-appeal-outline.md` | Fact-based appeal structure for invalid traffic cases |
-| `examples/ad-serving-limit-action-plan.md` | Dated log and action plan for an ad serving limit |
-| `examples/advanced-monthly-review-checklist.md` | Monthly review for an approved account |
+Every page below is a separate guide. Pick the one that fits your
+situation.
 
-## Install
+- **[Install](docs/installation.md)** — get the skill into Muse,
+  Claude Code, or any compatible tool, or read it without
+  installing.
+- **[Understand](docs/understanding.md)** — how approval actually
+  works, in plain language: the three policy layers, the four
+  official checks, and the myths that waste time.
+- **[Use](docs/usage.md)** — workflows for a first site, a
+  rejection, and an approved account.
+- **[Audit scripts](docs/audit-scripts.md)** — the two checkers,
+  their options, and how to read their reports.
+- **[FAQ](docs/faq.md)** — short, honest answers to the questions
+  everyone asks.
+- **[Contents](docs/contents.md)** — every file in the skill,
+  linked: 33 references, 2 scripts, 5 examples.
+- **[Contribute](docs/contributing.md)** — how to fix or extend
+  the skill.
 
-### Muse
+![How the skill works](assets/workflow.svg)
 
-Copy or clone this folder into your custom skills directory as
-`adsense_approval_mastery`:
+## Try it in 30 seconds
+
+![Terminal preview](assets/terminal.svg)
 
 ```bash
 git clone https://github.com/sonudigitalmindset-design/adsense-approval-skill.git
-cp -r adsense-approval-skill ~/workspace/custom-skills/adsense_approval_mastery
-```
-
-Muse reads `skill.yaml` for the skill's name and description and
-`SKILL.md` for the instructions. The frontmatter block at the top of
-`SKILL.md` is the Agent Skills metadata; Muse ignores it and uses
-`skill.yaml`.
-
-### Claude Code / Agent Skills compatible tools
-
-Copy or clone this folder into your skills directory, for example:
-
-```bash
-git clone https://github.com/sonudigitalmindset-design/adsense-approval-skill.git
-cp -r adsense-approval-skill ~/.claude/skills/adsense-approval-mastery
-```
-
-The `SKILL.md` frontmatter (`name` + `description`) follows the Agent
-Skills open format. Adjust the destination path for your tool
-(Cursor, Windsurf, and others use their own skills folders).
-
-### Use without installing
-
-Read `SKILL.md` and the `references/` files directly. Everything a
-human needs is in plain Markdown. No build step, no dependencies.
-
-## Use the readiness checker
-
-```bash
+cd adsense-approval-skill
 python3 scripts/site_audit.py https://example.com
-```
-
-It is read-only: it fetches the homepage, robots.txt, sitemap,
-ads.txt, and common trust-page URLs, and reports blockers and
-warnings. It cannot judge content quality or policy compliance, so
-always follow it with the human audit in
-`references/08-pre-apply-checklist.md`.
-
-## Use the deep approval-clone audit
-
-```bash
 python3 scripts/deep_audit.py https://example.com --output report.md --json report.json
 ```
 
-It crawls the sitemap and checks every machine-checkable point:
-redirect and host consistency, ads.txt line validation, consent
-and ad code signals, sitemap freshness, 404 behaviour, titles,
-descriptions, H1s, word counts and article-only word counts,
-image alt text, canonicals, noindex flags, mixed content,
-placeholder text, review phrases, duplicate titles,
-near-duplicate article text, and verification of internal
-links, external links, and images. It replicates the checkable
-surface of a review, not Google's decision, and no script can
-match the decision 100 percent. See
-`references/23-approval-clone-audit.md` for the method and
-limits, and `references/31-approval-check-matrix.md` for the
-full split between automated checks, human-decided flags, and
-checks no script can run.
+Both scripts are read-only and use only the Python standard
+library. No dependencies, no account, no writes to the site.
+Full options and report reading: [Audit scripts](docs/audit-scripts.md).
 
-## Learning path
+## What is inside
 
-The full zero-to-advanced path, with a check at each level, is in
-`references/22-learning-paths.md`: beginner, preparing a first
-site, applying, running ads, optimization, and advanced
-multi-product work.
+- **33 reference files** covering history, eligibility, all three
+  policy layers, terms and payments, rejection fixes, content
+  quality, consent, platforms, traffic, YouTube and other
+  products, advanced reporting, account architecture, tax edge
+  cases, decision playbooks, the complete approval check matrix,
+  and the inferred review signals Google never publishes.
+- **2 audit scripts**: a quick readiness checker and a deep
+  approval-clone crawler that checks every machine-checkable
+  point across every page, with a heuristic readiness score
+  that is labelled as never a Google score.
+- **5 example templates**: audit report, Privacy Policy outline,
+  policy appeal outline, ad serving limit action plan, and a
+  monthly review checklist.
+- **1 skill file** (`SKILL.md`) with the full instructions your
+  assistant follows.
 
-New to AdSense? Read in this order:
-
-1. `references/01-history-timeline.md` — how we got here
-2. `references/10-glossary.md` — the vocabulary
-3. `references/02-eligibility-and-application.md` — what Google
-   actually requires, and what it does not
-4. `references/03-publisher-policies.md` and
-   `references/04-publisher-restrictions.md` — what can and cannot
-   carry ads
-5. `references/05-program-policies-ads-traffic.md` — the rules that
-   close accounts
-6. `references/09-content-quality-guide.md` — how to write content
-   that passes
-7. `references/08-pre-apply-checklist.md` — the final check
-8. `references/07-rejection-reasons-and-fixes.md` — only if rejected
+The full linked index is in [Contents](docs/contents.md). The
+zero-to-advanced reading path is in
+[`references/22-learning-paths.md`](references/22-learning-paths.md).
 
 ## Keeping it current
 
-AdSense policies change. Before quoting a current rule, recheck the
-live official pages listed in `references/11-official-sources.md`.
-When a page contradicts this skill, the page wins: update the skill
-and record the change in `CHANGELOG.md`.
+AdSense policies change. Before quoting a current rule, recheck
+the live official pages listed in
+[`references/11-official-sources.md`](references/11-official-sources.md).
+When a page contradicts this skill, the page wins: update the
+skill and record the change in [`CHANGELOG.md`](CHANGELOG.md).
 
 Last verified against live official pages: **17 November 2026**.
 
-## Contributing
-
-Fixes welcome, especially:
-
-- A policy wording change with the live official URL and the date
-  you read it
-- A broken official link, with the new live URL
-- A clearer example that does not invent a rule
-
-Do not add "guaranteed approval" claims, unpublished minimums, or
-workarounds that hide violations.
-
 ## License
 
-MIT. See `LICENSE`. This project is not affiliated with Google.
-AdSense is a trademark of Google LLC.
+MIT. See [`LICENSE`](LICENSE). This project is not affiliated
+with Google. AdSense is a trademark of Google LLC.
+
+---
+
+<p align="center">Built by <b>Sonu Digital Mindset</b></p>
