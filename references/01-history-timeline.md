@@ -115,10 +115,11 @@
   government-issued photo ID and, depending on location, taking
   a video selfie. The window is 45 days from the first request,
   after which Google stops showing ads or pauses activation.
-  Verified on two live AdSense Help pages on 17 November 2026:
-  "Complete your AdSense account setup" and "Verify your
-  identity using online verification". Full process details are
-  in `references/16-verification-and-payments-troubleshooting.md`.
+  Verified on the live AdSense Help page "Verify your identity
+  using online verification" on 17 November 2026. The account
+  setup page describes the same step from June 2026. Full
+  process details are in
+  `references/16-verification-and-payments-troubleshooting.md`.
 
 ## The through-line for learners
 
