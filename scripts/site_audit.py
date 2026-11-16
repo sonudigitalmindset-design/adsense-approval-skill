@@ -20,6 +20,7 @@ import argparse
 import re
 import ssl
 import sys
+import time
 import urllib.error
 import urllib.request
 from html.parser import HTMLParser
@@ -84,18 +85,34 @@ class _LinkTitleParser(HTMLParser):
 
 
 def fetch(url, timeout):
-    """GET a URL. Returns (status, final_url, body_text, error)."""
+    """GET a URL, retrying once after a transient failure.
+
+    Returns (status, final_url, body_text, error). A status of None
+    means the fetch itself failed; an HTTP status means the server
+    answered.
+    """
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     ctx = ssl.create_default_context()
-    try:
-        with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
-            raw = resp.read(2_000_000)
-            body = raw.decode("utf-8", errors="replace")
-            return resp.status, resp.geturl(), body, None
-    except urllib.error.HTTPError as exc:
-        return exc.code, exc.geturl(), "", f"HTTP {exc.code}"
-    except Exception as exc:  # noqa: BLE001 - report any fetch failure
-        return None, url, "", str(exc)
+    last_error = ""
+    for attempt in range(2):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
+                raw = resp.read(2_000_000)
+                body = raw.decode("utf-8", errors="replace")
+                return resp.status, resp.geturl(), body, None
+        except urllib.error.HTTPError as exc:
+            if exc.code >= 500 and attempt == 0:
+                last_error = f"HTTP {exc.code}"
+                time.sleep(2)
+                continue
+            return exc.code, exc.geturl(), "", f"HTTP {exc.code}"
+        except Exception as exc:  # noqa: BLE001 - report any fetch failure
+            last_error = str(exc)
+            if attempt == 0:
+                time.sleep(2)
+                continue
+            return None, url, "", last_error
+    return None, url, "", last_error
 
 
 def check_path(base, paths, timeout):
@@ -165,14 +182,16 @@ def main(argv=None):
             report("warn", f"Demo/placeholder marker found on homepage: '{marker}'. Remove before applying.")
 
     # robots.txt
-    status, _, robots, _ = fetch(urljoin(base, "/robots.txt"), args.timeout)
+    status, _, robots, error = fetch(urljoin(base, "/robots.txt"), args.timeout)
     if status == 200:
         if re.search(r"User-agent:\s*\*\s*\nDisallow:\s*/\s*$", robots, re.M):
             report("fail", "robots.txt disallows all crawling. Googlebot cannot review the site.")
         else:
             report("ok", "robots.txt exists and does not block all crawling.")
+    elif status == 404:
+        report("warn", "No robots.txt found (HTTP 404). Add one and check it does not block Googlebot.")
     else:
-        report("warn", "No robots.txt found. Add one and check it does not block Googlebot.")
+        report("warn", f"Could not verify robots.txt ({error or status}). Open it in a browser to check.")
 
     # Sitemap
     sitemap = check_path(base, ["/sitemap.xml", "/sitemap_index.xml", "/sitemaps.xml", "/wp-sitemap.xml"], args.timeout)
@@ -182,13 +201,15 @@ def main(argv=None):
         report("warn", "No common sitemap URL found. Publish a sitemap.")
 
     # ads.txt
-    status, _, ads_txt, _ = fetch(urljoin(base, "/ads.txt"), args.timeout)
+    status, _, ads_txt, error = fetch(urljoin(base, "/ads.txt"), args.timeout)
     if status == 200 and "google.com" in ads_txt and "pub-" in ads_txt:
         report("ok", "ads.txt exists and contains a Google publisher line.")
     elif status == 200:
         report("warn", "ads.txt exists but no Google publisher line was found. Add the line from AdSense.")
+    elif status == 404:
+        report("warn", "No ads.txt found (HTTP 404). Publish it at the site root after signup.")
     else:
-        report("warn", "No ads.txt found. Publish it at the site root after signup.")
+        report("warn", f"Could not verify ads.txt ({error or status}). Open it in a browser to check.")
 
     # Trust pages
     print("\nTrust pages (first matching slug that returns 200):")

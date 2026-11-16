@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 — 17 November 2026
+
+- `scripts/site_audit.py`: retry each fetch once after a transient
+  failure, and distinguish a real HTTP 404 ("not found") from a fetch
+  that could not be verified. A flaky host no longer produces a false
+  "no robots.txt" warning, as found on the first live run against
+  thegroundzerofit.com.
+
 ## 1.0.0 — 17 November 2026
 
 - First release.
