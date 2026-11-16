@@ -1,5 +1,62 @@
 # Changelog
 
+## 1.4.0 — 17 November 2026
+
+- `scripts/deep_audit.py` version 2: the approval clone now
+  covers the full checkable surface. New site-level checks:
+  HTTP to HTTPS redirect, alternate host consistency,
+  response time and security headers, robots.txt AdSense
+  crawler and sitemap checks, ads.txt line validation with
+  publisher ID format and certification ID, soft 404
+  detection, feed and pagination presence, sitemap lastmod
+  freshness, and consent platform and ad network markers.
+  New per-page checks: article-only word counts, H2 counts,
+  empty H1s, title word repetition, description identical
+  to title, HTML lang, charset, Open Graph and Twitter
+  tags, missing canonical, image dimensions, ad slot
+  counts, popup and modal markers, trust-page links per
+  page, and copyright-risk signals. New cross-page checks:
+  near-duplicate article text by shingle similarity,
+  external link verification with unverified states,
+  same-origin image verification, a labelled heuristic
+  readiness score, and a machine-readable JSON report
+  with `--json`.
+- `scripts/site_audit.py`: HTML lang, favicon, consent
+  markers, HTTP to HTTPS redirect, soft 404, robots.txt
+  AdSense crawler and sitemap checks, and ads.txt line
+  validation.
+- New `references/31-approval-check-matrix.md`: every
+  approval check in three groups, automated, script
+  flagged human decided, and no script can check, with an
+  honest statement that no tool matches Google's decision
+  100 percent.
+- New `references/32-hidden-deep-approval-checks.md`:
+  the three layers of the review, what Google confirms,
+  what rejection patterns suggest, and what stays hidden
+  inside Google, with the deep trust checks the script
+  now runs for each layer it can see.
+- Deep trust checks in `scripts/deep_audit.py`: About
+  page depth, Contact page form presence, content
+  freshness and history span from sitemap dates, orphan
+  pages, sitemap coverage, duplicate H1 texts, canonical
+  collisions, date and author signal summaries, sponsored
+  link counts, word count distribution, homepage
+  structure, and thin category and tag pages.
+- `scripts/deep_audit.py` reliability fixes: truncated
+  responses are retried even when the server sends no
+  Content-Length, truncated sitemap bodies are refetched
+  instead of silently dropping URLs, sitemap files that
+  still fail after retries are reported as a warning so
+  an incomplete crawl is never silent, pages that return
+  200 with an empty body are treated as failed reads,
+  the title repetition flag ignores common stopwords,
+  and images that return no HTTP response are reported
+  as unverified rather than broken.
+- `references/23-approval-clone-audit.md` rewritten for
+  version 2, with the new options and thresholds.
+- `SKILL.md` audit workflow updated for version 2 and the
+  check matrix.
+
 ## 1.3.0 — 17 November 2026
 
 - Seven new advanced reference files: ad serving limits and

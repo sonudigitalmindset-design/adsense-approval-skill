@@ -49,6 +49,8 @@ points at the live official pages as the source of truth.
 | `references/28-payments-tax-and-edge-cases.md` | Holds, tax forms, final payments, country moves, edge cases |
 | `references/29-advanced-technical-implementation.md` | ads.txt at scale, sellers.json, consent debugging, refresh ban |
 | `references/30-advanced-decision-playbooks.md` | Ten hard situations with checks, actions, and stop rules |
+| `references/31-approval-check-matrix.md` | Every approval check: automated, human-decided, and uncheckable |
+| `references/32-hidden-deep-approval-checks.md` | Confirmed, suggested, and hidden review layers, with the deep checks |
 | `scripts/site_audit.py` | Read-only readiness checker (Python standard library only) |
 | `scripts/deep_audit.py` | Deep approval-clone crawler: every page, every small point |
 | `examples/audit-report-template.md` | Report template for one site audit |
@@ -107,15 +109,23 @@ always follow it with the human audit in
 ## Use the deep approval-clone audit
 
 ```bash
-python3 scripts/deep_audit.py https://example.com --output report.md
+python3 scripts/deep_audit.py https://example.com --output report.md --json report.json
 ```
 
-It crawls the sitemap and checks every page point by point:
-titles, descriptions, H1s, word counts, image alt text, canonicals,
-noindex flags, mixed content, placeholder text, duplicate titles,
-and every internal link. It replicates the checkable surface of a
-review, not Google's decision. See
-`references/23-approval-clone-audit.md` for the method and limits.
+It crawls the sitemap and checks every machine-checkable point:
+redirect and host consistency, ads.txt line validation, consent
+and ad code signals, sitemap freshness, 404 behaviour, titles,
+descriptions, H1s, word counts and article-only word counts,
+image alt text, canonicals, noindex flags, mixed content,
+placeholder text, review phrases, duplicate titles,
+near-duplicate article text, and verification of internal
+links, external links, and images. It replicates the checkable
+surface of a review, not Google's decision, and no script can
+match the decision 100 percent. See
+`references/23-approval-clone-audit.md` for the method and
+limits, and `references/31-approval-check-matrix.md` for the
+full split between automated checks, human-decided flags, and
+checks no script can run.
 
 ## Learning path
 

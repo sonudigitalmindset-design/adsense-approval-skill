@@ -64,15 +64,21 @@ class _LinkTitleParser(HTMLParser):
         self.in_title = False
         self.title_done = False
         self.has_viewport = False
+        self.html_lang = ""
+        self.has_favicon = False
         self.links = []
         self.text_parts = []
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "html":
+            self.html_lang = attrs.get("lang", "")
         if tag == "title" and not self.title_done:
             self.in_title = True
         if tag == "meta" and attrs.get("name", "").lower() == "viewport":
             self.has_viewport = True
+        if tag == "link" and "icon" in attrs.get("rel", "").lower():
+            self.has_favicon = True
         if tag == "a" and attrs.get("href"):
             self.links.append(attrs["href"])
 
@@ -193,12 +199,49 @@ def main(argv=None):
         report("ok", "Viewport meta tag present (mobile layout signal).")
     else:
         report("warn", "No viewport meta tag found. Check mobile layout.")
+    if parser_html.html_lang:
+        report("ok", f"HTML lang attribute present (lang={parser_html.html_lang}).")
+    else:
+        report("warn", "No HTML lang attribute found.")
+    if parser_html.has_favicon:
+        report("ok", "Favicon link present.")
+    else:
+        report("warn", "No favicon link found.")
     print(f"      Homepage visible text is about {words} words (rough count).")
 
     lowered = text.lower()
     for marker in DEMO_MARKERS:
         if marker in lowered:
             report("warn", f"Demo/placeholder marker found on homepage: '{marker}'. Remove before applying.")
+
+    # Consent platform marker on the homepage
+    home_lower = body.lower()
+    cmp_markers = ["complianz", "cmplz-", "cookiebot", "onetrust", "optanon",
+                   "trustarc", "fundingchoices", "cookieadmin", "cookieyes",
+                   "cky-", "iubenda", "termly", "osano"]
+    if any(m in home_lower for m in cmp_markers):
+        report("ok", "Consent platform marker found on the homepage. Verify the banner renders for a new visitor.")
+    else:
+        report("warn", "No consent platform marker found on the homepage. Check consent handling for EEA, UK, and Swiss visitors.")
+
+    # HTTP to HTTPS redirect (when the input URL is HTTPS)
+    if parsed.scheme == "https":
+        status, final_url, _, error = fetch(f"http://{parsed.netloc}/", args.timeout)
+        if status == 200 and final_url.startswith("https://"):
+            report("ok", "HTTP version redirects to HTTPS.")
+        elif status == 200:
+            report("warn", "HTTP version serves content without redirecting to HTTPS.")
+        else:
+            report("warn", f"Could not verify the HTTP to HTTPS redirect ({error or status}).")
+
+    # 404 behaviour
+    status, _, _, _ = fetch(urljoin(base, "/this-page-does-not-exist-adsense-audit-12345/"), args.timeout)
+    if status == 404:
+        report("ok", "A nonsense URL returns HTTP 404 (no soft 404).")
+    elif status == 200:
+        report("warn", "A nonsense URL returns HTTP 200 (soft 404). Missing pages should return 404.")
+    else:
+        report("warn", f"Could not verify 404 behaviour ({status}).")
 
     # robots.txt
     status, _, robots, error = fetch(urljoin(base, "/robots.txt"), args.timeout)
@@ -207,6 +250,12 @@ def main(argv=None):
             report("fail", "robots.txt disallows all crawling. Googlebot cannot review the site.")
         else:
             report("ok", "robots.txt exists and does not block all crawling.")
+        if re.search(r"user-agent:\s*mediapartners-google\s*\n(?:.*\n)?\s*disallow:\s*/\s*$", robots, re.I | re.M):
+            report("fail", "robots.txt blocks the AdSense crawler (Mediapartners-Google).")
+        if "sitemap:" in robots.lower():
+            report("ok", "robots.txt names a sitemap.")
+        else:
+            report("warn", "robots.txt does not name a sitemap. Add a Sitemap line.")
     elif status == 404:
         report("warn", "No robots.txt found (HTTP 404). Add one and check it does not block Googlebot.")
     else:
@@ -222,7 +271,25 @@ def main(argv=None):
     # ads.txt
     status, _, ads_txt, error = fetch(urljoin(base, "/ads.txt"), args.timeout)
     if status == 200 and "google.com" in ads_txt and "pub-" in ads_txt:
-        report("ok", "ads.txt exists and contains a Google publisher line.")
+        google_lines = []
+        malformed = False
+        for line in ads_txt.splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            parts = [p.strip() for p in stripped.split(",")]
+            if parts and parts[0].lower() == "google.com":
+                google_lines.append(parts)
+                if len(parts) < 3 or not re.fullmatch(r"pub-\d{16}", parts[1] or ""):
+                    malformed = True
+        if google_lines and not malformed:
+            first = google_lines[0]
+            if first[2].upper() == "DIRECT" and len(first) > 3 and first[3] == "f08c47fec0942fa0":
+                report("ok", "ads.txt Google line is well formed: DIRECT with the certification ID.")
+            else:
+                report("warn", "ads.txt Google line found but the relationship or certification ID looks off. Copy the line from the account.")
+        else:
+            report("warn", "ads.txt Google line is malformed. Copy the line from the account.")
     elif status == 200:
         report("warn", "ads.txt exists but no Google publisher line was found. Add the line from AdSense.")
     elif status == 404:

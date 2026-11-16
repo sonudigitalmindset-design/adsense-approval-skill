@@ -4,7 +4,16 @@ How to replicate the checkable surface of an AdSense site review
 point by point, using the deep audit script. This clones the
 review's observable checks, not Google's internal decision. No
 script can reproduce reviewer judgement, originality assessment,
-or policy interpretation.
+or policy interpretation. For the full list of what is
+automated, what is flagged for a human, and what no script can
+check, read `references/31-approval-check-matrix.md`.
+
+Version 2 of the script adds redirect and host consistency,
+ads.txt line validation, consent and ad code detection,
+sitemap freshness, 404 behaviour, Open Graph and language
+checks, article-only word counts, near-duplicate detection,
+external link and image verification, a readiness score, and
+a JSON report.
 
 ## What the clone covers
 
@@ -13,42 +22,69 @@ checks every page for the small points a reviewer notices:
 
 Site level:
 
-- HTTPS across the site.
-- Homepage reachable with HTTP 200.
-- robots.txt present and not blocking all crawling.
-- ads.txt present with a Google publisher line.
+- HTTPS across the site, with HTTP to HTTPS redirect checked.
+- Alternate host (www or bare) redirecting to one canonical host.
+- Homepage reachable with HTTP 200, with response time and
+  security headers recorded.
+- robots.txt present, not blocking all crawling, not blocking
+  the AdSense crawler, and naming a sitemap.
+- ads.txt present with a well formed Google publisher line:
+  16-digit publisher ID, DIRECT relationship, and the
+  certification ID.
+- Nonsense URL returning 404, not a soft 404.
+- Feed and archive pagination presence recorded.
 - Trust pages present: About, Contact, Privacy, Terms,
   Disclaimer.
 - Privacy page disclosure keywords: cookies, Google,
   advertising, third parties, opt-out or Ads Settings.
-- Sitemap present with reachable URLs.
+- Consent platform markers and ad code markers detected.
+- Sitemap present with reachable URLs, and lastmod freshness
+  checked.
 
 Every crawled page:
 
 - HTTP 200, with redirects noted.
-- Title present, reasonable length, unique across the site.
-- Meta description present, reasonable length, unique.
-- Exactly one H1.
-- Word count, with thin pages flagged for human judgement.
-- Images without alt text, counted per page.
+- Title present, reasonable length, unique across the site,
+  with word repetition flagged.
+- Meta description present, reasonable length, unique, and
+  not identical to the title.
+- Exactly one H1, with empty H1s flagged, and H2 count
+  recorded.
+- Word count, with thin pages flagged for human judgement,
+  and article-only word count recorded separately.
+- Images without alt text, counted per page, and images
+  without width and height attributes counted.
 - Canonical tag present and self-referencing.
 - Meta robots flags such as noindex.
-- Viewport tag for mobile layout.
+- Viewport tag for mobile layout, HTML lang attribute, and
+  charset meta.
+- Open Graph title, description, and image, and Twitter card.
 - Mixed content references on HTTPS pages.
+- Ad slot count, with six or more slots flagged for an
+  ad-to-content balance review.
+- Popup and modal markers, counted for manual review.
+- Trust-page links counted per page.
 - Placeholder and demo strings: lorem ipsum, hello world, sample
   page, under construction, and similar.
-- High-risk phrases flagged for human review only, never as an
-  automatic verdict.
-- Structured data, author signals, and date signals, as
+- High-risk phrases and copyright-risk signals flagged for
+  human review only, never as an automatic verdict.
+- Structured data types, author signals, and date signals, as
   information only.
 
 Cross-page:
 
 - Duplicate titles and duplicate descriptions.
 - Pages with no H1 or with several H1s.
+- Pages with no lang attribute, no canonical, or no og:image.
 - Total images missing alt text.
+- Near-duplicate article text by shingle similarity.
 - Internal link verification: every unique internal link checked
   for HTTP 200, up to the cap.
+- External link verification, up to the cap, with blocked links
+  reported as unverified rather than broken.
+- Same-origin image verification, up to the cap.
+- Readiness score from 0 to 100, heuristic only, never a
+  Google score.
 
 ## What the clone cannot cover
 
@@ -69,17 +105,21 @@ It never means approval is certain.
 
 ```bash
 python3 scripts/deep_audit.py https://example.com
-python3 scripts/deep_audit.py https://example.com --max-pages 100 --max-links 150 --output report.md
+python3 scripts/deep_audit.py https://example.com --max-pages 100 --max-links 150 --output report.md --json report.json
 ```
 
 Options:
 
 - `--max-pages`: cap on crawled pages. Default 200.
 - `--max-links`: cap on verified internal links. Default 250.
+- `--max-external`: cap on verified external links. Default 80.
+- `--max-images`: cap on verified images. Default 100.
 - `--delay`: seconds between requests. Default 0.25. Raise it for
   slow or shared hosting.
 - `--timeout`: seconds per request. Default 20.
 - `--output`: write the same report into a Markdown file.
+- `--json`: write a machine-readable JSON report with every page
+  record, every check, and every broken link.
 
 The script is read-only and uses only the Python standard library.
 It identifies itself in the user agent string.
@@ -130,6 +170,17 @@ It identifies itself in the user agent string.
   worthless. A human judges value.
 - Exactly one H1: standard practice. The fix is usually a theme
   or template change, not content work.
+- Near-duplicate flag at 75 percent shingle similarity: a
+  heuristic. Shared template text inflates the score. Read
+  both pages before calling anything a duplicate.
+- Ad slot flag at 6 or more slots: a heuristic prompt to check
+  ad-to-content balance, not a Google limit. The old
+  three-ads-per-page limit was removed in 2016, reported.
+- Homepage slow flag over 3 seconds: a user experience
+  heuristic, not a Google rule.
+- Readiness score, 100 minus 8 per failure and 2 per warning:
+  a work-remaining rank, not a Google score, and it predicts
+  nothing about approval.
 
 Never present these thresholds to a user as Google's rules. They
 are tripwires for human attention.
