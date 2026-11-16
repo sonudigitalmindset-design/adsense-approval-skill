@@ -114,8 +114,13 @@ Options:
 - `--max-links`: cap on verified internal links. Default 250.
 - `--max-external`: cap on verified external links. Default 80.
 - `--max-images`: cap on verified images. Default 100.
-- `--delay`: seconds between requests. Default 0.25. Raise it for
-  slow or shared hosting.
+- `--delay`: seconds of delay per worker before each request.
+  Default 0.25. Raise it for slow or shared hosting.
+- `--workers`: parallel requests. Default 8. Page fetches,
+  site-level checks, and link and image verification all run
+  in parallel, and the report still reads in sitemap order.
+  Use 1 or 2 for fragile shared hosting, and raise the delay
+  if the host rate limits the crawl.
 - `--timeout`: seconds per request. Default 20.
 - `--output`: write the same report into a Markdown file.
 - `--json`: write a machine-readable JSON report with every page

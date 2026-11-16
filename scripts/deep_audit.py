@@ -11,8 +11,9 @@ quality signals that no crawler can see. This script covers the
 checkable surface as fully as possible and says plainly what it
 cannot judge.
 
-Read-only. Python standard library only. Be polite: requests run
-with a delay between them and caps on pages, links, and images.
+Read-only. Python standard library only. Be polite: page fetches
+and link checks run in parallel with a small delay per worker,
+and caps limit pages, links, and images.
 
 Usage:
     python3 scripts/deep_audit.py https://example.com
@@ -33,6 +34,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
 
@@ -257,6 +259,45 @@ def head_or_get(url, timeout):
         except Exception as exc:  # noqa: BLE001 - report any failure
             return None, str(exc), 0
     return None, "unreachable", 0
+
+
+def _fetch_named(job):
+    """Fetch one labelled URL. Runs inside the worker pool."""
+    label, url, timeout, delay = job
+    time.sleep(delay)
+    return label, fetch(url, timeout)
+
+
+def _probe_trust(job):
+    """Probe one trust-page slug. Runs inside the worker pool."""
+    name, slug, base, timeout, delay = job
+    time.sleep(delay)
+    status, _, _, _, _, _ = fetch(urljoin(base, slug), timeout)
+    return name, slug, status
+
+
+def _fetch_page(job):
+    """Fetch one sitemap page. Runs inside the worker pool."""
+    page_url, timeout, delay = job
+    time.sleep(delay)
+    status, final_url, body, error, _, _ = fetch(page_url, timeout)
+    return status, final_url, body, error
+
+
+def _fetch_status(job):
+    """Fetch one link for verification. Runs inside the worker pool."""
+    url, timeout, delay = job
+    time.sleep(delay)
+    status, _, _, error, _, _ = fetch(url, timeout)
+    return url, status, error
+
+
+def _probe_url(job):
+    """HEAD/GET probe for one link or image. Runs inside the worker pool."""
+    url, timeout, delay = job
+    time.sleep(delay)
+    status, error, size = head_or_get(url, timeout)
+    return url, status, error, size
 
 
 class _PageParser(HTMLParser):
@@ -507,10 +548,12 @@ def main():
     parser.add_argument("--max-links", type=int, default=250, help="Max internal links to verify")
     parser.add_argument("--max-external", type=int, default=80, help="Max external links to verify")
     parser.add_argument("--max-images", type=int, default=100, help="Max images to verify")
-    parser.add_argument("--delay", type=float, default=0.25, help="Seconds between requests")
+    parser.add_argument("--delay", type=float, default=0.25, help="Seconds of delay per worker before each request")
+    parser.add_argument("--workers", type=int, default=8, help="Parallel requests (default 8). Use 1 or 2 for fragile shared hosting")
     parser.add_argument("--output", help="Write the same report to a Markdown file")
     parser.add_argument("--json", help="Write a machine-readable JSON report")
     args = parser.parse_args()
+    args.workers = max(1, args.workers)
 
     base = args.url if args.url.endswith("/") else args.url + "/"
     parsed_base = urlparse(base)
@@ -550,10 +593,34 @@ def main():
     else:
         info("No X-Content-Type-Options header (optional hardening).")
 
+    # Fetch the independent site-level URLs in parallel, then
+    # report them in order below so the output stays stable.
+    if netloc.startswith("www."):
+        alt_host = netloc[4:]
+    else:
+        alt_host = "www." + netloc
+    alt_url = f"{parsed_base.scheme}://{alt_host}/"
+    nonsense = urljoin(base, "/this-page-does-not-exist-adsense-audit-12345/")
+    site_jobs = [
+        ("robots", urljoin(base, "/robots.txt")),
+        ("ads", urljoin(base, "/ads.txt")),
+        ("nonsense", nonsense),
+        ("feed", urljoin(base, "/feed/")),
+        ("page2", urljoin(base, "/page/2/")),
+        ("alt", alt_url),
+    ]
+    if parsed_base.scheme == "https":
+        site_jobs.append(("http", "http://" + parsed_base.netloc + "/"))
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        site_results = dict(executor.map(
+            _fetch_named,
+            [(label, url, args.timeout, args.delay) for label, url in site_jobs],
+        ))
+
     # HTTP to HTTPS redirect
     if parsed_base.scheme == "https":
         http_url = "http://" + parsed_base.netloc + "/"
-        status, final_url, _, error, _, _ = fetch(http_url, args.timeout)
+        status, final_url, _, error, _, _ = site_results["http"]
         if status == 200 and final_url.startswith("https://"):
             report("ok", "HTTP version redirects to HTTPS.")
         elif status == 200:
@@ -562,12 +629,7 @@ def main():
             info(f"HTTP version check: {error or status} (redirect behaviour unclear).")
 
     # www consistency
-    if netloc.startswith("www."):
-        alt_host = netloc[4:]
-    else:
-        alt_host = "www." + netloc
-    alt_url = f"{parsed_base.scheme}://{alt_host}/"
-    status, final_url, _, _, _, _ = fetch(alt_url, args.timeout)
+    status, final_url, _, _, _, _ = site_results["alt"]
     if status == 200 and urlparse(final_url).netloc.lower() == netloc:
         report("ok", f"Alternate host {alt_host} redirects to the canonical host.")
     elif status == 200:
@@ -576,7 +638,7 @@ def main():
         info(f"Alternate host {alt_host} did not return 200 ({status}). Check the redirect in a browser.")
 
     # robots.txt, deep
-    status, _, robots, _, _, _ = fetch(urljoin(base, "/robots.txt"), args.timeout)
+    status, _, robots, _, _, _ = site_results["robots"]
     if status == 200:
         if re.search(r"User-agent:\s*\*\s*\nDisallow:\s*/\s*$", robots, re.M):
             report("fail", "robots.txt disallows all crawling.")
@@ -601,7 +663,7 @@ def main():
         report("warn", f"Could not verify robots.txt ({status}). Check it in a browser.")
 
     # ads.txt, deep validation
-    status, _, ads_txt, _, _, _ = fetch(urljoin(base, "/ads.txt"), args.timeout)
+    status, _, ads_txt, _, _, _ = site_results["ads"]
     if status == 200:
         google_lines = []
         malformed = []
@@ -637,8 +699,7 @@ def main():
         report("warn", f"Could not verify ads.txt ({status}). Check it in a browser.")
 
     # 404 behaviour, feed, pagination
-    nonsense = urljoin(base, "/this-page-does-not-exist-adsense-audit-12345/")
-    status, _, _, _, _, _ = fetch(nonsense, args.timeout)
+    status, _, _, _, _, _ = site_results["nonsense"]
     if status == 404:
         report("ok", "A nonsense URL returns HTTP 404 (no soft 404).")
     elif status == 200:
@@ -646,13 +707,13 @@ def main():
     else:
         info(f"Nonsense URL check returned {status}.")
 
-    status, _, feed_body, _, _, _ = fetch(urljoin(base, "/feed/"), args.timeout)
+    status, _, feed_body, _, _, _ = site_results["feed"]
     if status == 200 and ("<rss" in feed_body[:2000] or "<?xml" in feed_body[:2000]):
         info("RSS feed found at /feed/.")
     else:
         info("No RSS feed found at /feed/ (optional).")
 
-    status, _, _, _, _, _ = fetch(urljoin(base, "/page/2/"), args.timeout)
+    status, _, _, _, _, _ = site_results["page2"]
     if status == 200:
         info("Archive pagination /page/2/ returns 200.")
     elif status == 404:
@@ -664,14 +725,16 @@ def main():
     print()
     print("Trust pages:")
     trust_found = {}
+    trust_jobs = [(name, slug) for name, slugs in TRUST_SLUGS.items() for slug in slugs]
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        trust_status = {}
+        for name, slug, probed in executor.map(
+            _probe_trust,
+            [(name, slug, base, args.timeout, args.delay) for name, slug in trust_jobs],
+        ):
+            trust_status[(name, slug)] = probed
     for name, slugs in TRUST_SLUGS.items():
-        found = None
-        for slug in slugs:
-            status, _, _, _, _, _ = fetch(urljoin(base, slug), args.timeout)
-            if status == 200:
-                found = slug
-                break
-            time.sleep(args.delay)
+        found = next((slug for slug in slugs if trust_status.get((name, slug)) == 200), None)
         trust_found[name] = found
         if found:
             report("ok", f"{name}: found at {found}")
@@ -680,10 +743,19 @@ def main():
         else:
             report("warn", f"{name}: no common page found. Add one if the niche needs it.")
 
+    # Fetch the found trust-page bodies in parallel, then run
+    # the disclosure and depth checks in order below.
+    body_jobs = [(name, urljoin(base, trust_found[name]))
+                 for name in ("privacy", "about", "contact") if trust_found[name]]
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        trust_bodies = dict(executor.map(
+            _fetch_named,
+            [(name, url, args.timeout, args.delay) for name, url in body_jobs],
+        ))
+
     # Privacy disclosure keywords
     if trust_found["privacy"]:
-        time.sleep(args.delay)
-        status, _, privacy_body, _, _, _ = fetch(urljoin(base, trust_found["privacy"]), args.timeout)
+        status, _, privacy_body, _, _, _ = trust_bodies["privacy"]
         if status == 200:
             lowered = privacy_body.lower()
             print("Privacy disclosure check:")
@@ -701,8 +773,7 @@ def main():
 
     # About depth and contact form: trust signals a reviewer reads.
     if trust_found["about"]:
-        time.sleep(args.delay)
-        status, _, about_body, _, _, _ = fetch(urljoin(base, trust_found["about"]), args.timeout)
+        status, _, about_body, _, _, _ = trust_bodies["about"]
         if status == 200:
             about_words = len(re.findall(r"\S+", re.sub(r"<[^>]+>", " ", about_body)))
             if about_words < 100:
@@ -710,8 +781,7 @@ def main():
             else:
                 info(f"About page has about {about_words} words of page text.")
     if trust_found["contact"]:
-        time.sleep(args.delay)
-        status, _, contact_body, _, _, _ = fetch(urljoin(base, trust_found["contact"]), args.timeout)
+        status, _, contact_body, _, _, _ = trust_bodies["contact"]
         if status == 200:
             if "<form" in contact_body.lower():
                 info("Contact page contains a form.")
@@ -798,7 +868,7 @@ def main():
             break
     if base.rstrip("/") + "/" not in seen_pages and base not in seen_pages:
         pages.insert(0, base)
-    print(f"Crawling {len(pages)} pages (cap {args.max_pages}, {excluded} sitemap URLs excluded as non-HTML or off-site).")
+    print(f"Crawling {len(pages)} pages with {args.workers} parallel workers (cap {args.max_pages}, {excluded} sitemap URLs excluded as non-HTML or off-site).")
 
     trust_paths = {urlparse(urljoin(base, slug)).path for slug in trust_found.values() if slug}
 
@@ -810,9 +880,14 @@ def main():
     external_links = set()
     image_urls = set()
     outlink_map = {}
-    for page_url in pages:
-        time.sleep(args.delay)
-        status, final_url, body, error, _, _ = fetch(page_url, args.timeout)
+    # Fetch all pages in parallel, then analyse them in sitemap
+    # order so the report reads the same as a sequential run.
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        fetched = list(executor.map(
+            _fetch_page,
+            [(page_url, args.timeout, args.delay) for page_url in pages],
+        ))
+    for page_url, (status, final_url, body, error) in zip(pages, fetched):
         record = {"url": page_url, "status": status, "final": final_url, "flags": []}
         if status != 200 or not body:
             record["flags"].append(f"HTTP {error or status}")
@@ -1214,12 +1289,12 @@ def main():
     print()
     links_to_check = sorted(internal_links)[: args.max_links]
     print(f"Verifying {len(links_to_check)} unique internal links (cap {args.max_links}).")
-    broken = []
-    for link in links_to_check:
-        time.sleep(args.delay)
-        status, _, _, error, _, _ = fetch(link, args.timeout)
-        if status != 200:
-            broken.append((link, error or status))
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        checked = list(executor.map(
+            _fetch_status,
+            [(link, args.timeout, args.delay) for link in links_to_check],
+        ))
+    broken = [(link, error or status) for link, status, error in checked if status != 200]
     if broken:
         report("fail", f"{len(broken)} internal links do not return 200.")
         for link, problem in broken[:30]:
@@ -1231,11 +1306,14 @@ def main():
     print()
     ext_to_check = sorted(external_links)[: args.max_external]
     print(f"Verifying {len(ext_to_check)} unique external links (cap {args.max_external}).")
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        probed_ext = list(executor.map(
+            _probe_url,
+            [(link, args.timeout, args.delay) for link in ext_to_check],
+        ))
     ext_broken = []
     ext_unverified = []
-    for link in ext_to_check:
-        time.sleep(args.delay)
-        status, error, _ = head_or_get(link, args.timeout)
+    for link, status, error, _ in probed_ext:
         if status is not None and 200 <= status < 400:
             continue
         if status in (401, 403, 429) or status is None:
@@ -1255,12 +1333,15 @@ def main():
     print()
     imgs_to_check = sorted(image_urls)[: args.max_images]
     print(f"Verifying {len(imgs_to_check)} unique same-origin images (cap {args.max_images}).")
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        probed_imgs = list(executor.map(
+            _probe_url,
+            [(link, args.timeout, args.delay) for link in imgs_to_check],
+        ))
     broken_imgs = []
     unverified_imgs = []
     big_imgs = []
-    for link in imgs_to_check:
-        time.sleep(args.delay)
-        status, error, size = head_or_get(link, args.timeout)
+    for link, status, error, size in probed_imgs:
         if status is not None and 200 <= status < 400 and size > 1_000_000:
             big_imgs.append((link, size))
         if status is None:

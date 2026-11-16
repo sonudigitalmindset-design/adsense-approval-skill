@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.7.0 — 17 November 2026
+
+- `scripts/deep_audit.py` now checks in parallel: 8
+  workers by default fetch pages, run the site-level
+  checks, and verify links and images at the same time.
+  The report still reads in sitemap order, and results
+  are identical to a sequential run. New `--workers`
+  option: use 1 or 2 for fragile shared hosting.
+- `references/23-approval-clone-audit.md` and
+  `docs/audit-scripts.md` document the new option.
+
 ## 1.6.1 — 17 November 2026
 
 - README trimmed to a minimal landing page: banner,

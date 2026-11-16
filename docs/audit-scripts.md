@@ -60,8 +60,12 @@ and checks no script can run is in
 - `--max-external`: cap on verified external links.
   Default 80.
 - `--max-images`: cap on verified images. Default 100.
-- `--delay`: seconds between requests. Default 0.25.
-  Raise it for slow or shared hosting.
+- `--delay`: seconds of delay per worker before each request.
+  Default 0.25. Raise it for slow or shared hosting.
+- `--workers`: parallel requests. Default 8. Page fetches,
+  site-level checks, and link and image verification all run
+  at the same time, and the report still reads in sitemap
+  order. Use 1 or 2 for fragile shared hosting.
 - `--timeout`: seconds per request. Default 20.
 - `--output`: write the report into a Markdown file.
 - `--json`: write a machine-readable JSON report with
@@ -71,6 +75,14 @@ Lower the caps for a faster run on a large site, or when
 the host drops connections. A capped run still checks
 every crawled page. Only the link and image verification
 is capped.
+
+Speed: the deep audit fetches pages and verifies links and
+images with 8 parallel workers by default, so a 50-page
+site finishes in a minute or two on a normal host instead
+of several minutes one page at a time. The report order
+stays the same as a sequential run. If the host is slow
+or rate limits the crawl, lower `--workers` to 2 and
+raise `--delay` instead of raising the workers further.
 
 ## How to read the report
 
