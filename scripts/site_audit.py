@@ -17,6 +17,7 @@ Requires only the Python standard library. Makes GET requests only.
 """
 
 import argparse
+import http.client
 import re
 import ssl
 import sys
@@ -61,13 +62,14 @@ class _LinkTitleParser(HTMLParser):
         super().__init__()
         self.title_parts = []
         self.in_title = False
+        self.title_done = False
         self.has_viewport = False
         self.links = []
         self.text_parts = []
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        if tag == "title":
+        if tag == "title" and not self.title_done:
             self.in_title = True
         if tag == "meta" and attrs.get("name", "").lower() == "viewport":
             self.has_viewport = True
@@ -77,6 +79,7 @@ class _LinkTitleParser(HTMLParser):
     def handle_endtag(self, tag):
         if tag == "title":
             self.in_title = False
+            self.title_done = True
 
     def handle_data(self, data):
         if self.in_title:
@@ -97,9 +100,25 @@ def fetch(url, timeout):
     for attempt in range(2):
         try:
             with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
-                raw = resp.read(2_000_000)
+                status = resp.status
+                final_url = resp.geturl()
+                chunks = []
+                total = 0
+                try:
+                    while total < 2_000_000:
+                        chunk = resp.read(65536)
+                        if not chunk:
+                            break
+                        chunks.append(chunk)
+                        total += len(chunk)
+                except http.client.IncompleteRead as exc:
+                    # Keep the partial body. Some hosts close the
+                    # connection early, and the head of the page
+                    # usually holds everything this check needs.
+                    chunks.append(exc.partial)
+                raw = b"".join(chunks)
                 body = raw.decode("utf-8", errors="replace")
-                return resp.status, resp.geturl(), body, None
+                return status, final_url, body, None
         except urllib.error.HTTPError as exc:
             if exc.code >= 500 and attempt == 0:
                 last_error = f"HTTP {exc.code}"

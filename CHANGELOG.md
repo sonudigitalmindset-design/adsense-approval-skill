@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.1 — 17 November 2026
+
+- `scripts/site_audit.py`: the title parser now reads only the
+  first `<title>` element. SVG `<title>` elements inside page
+  icons (for example a cookie banner's "Powered by" logo) no
+  longer get appended to the reported homepage title. The live
+  thegroundzerofit.com title was always clean; the "CookieAdmin
+  CookieAdmin" suffix was a script bug, now fixed and verified.
+- `scripts/site_audit.py`: the fetcher now reads in chunks and
+  keeps the partial body when a host closes the connection early
+  (IncompleteRead), instead of failing the whole check. Found on
+  the same live run against thegroundzerofit.com.
+
 ## 1.1.0 — 17 November 2026
 
 - Eleven new reference files complete the zero-to-advanced
