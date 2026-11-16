@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.1 — 17 November 2026
+
+- README trimmed to a minimal landing page: banner,
+  badges, one-line pitch, a single row of guide links,
+  the workflow diagram, quick start, and the honesty
+  note. The terminal preview moved to
+  `docs/audit-scripts.md`.
+
 ## 1.6.0 — 17 November 2026
 
 - New `docs/` guides, each a separate page linked from

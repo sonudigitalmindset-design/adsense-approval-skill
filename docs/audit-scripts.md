@@ -4,6 +4,8 @@ Two read-only Python checkers. Both use only the Python
 standard library. No dependencies, no installation, no
 account, no writes to the site.
 
+![Terminal preview](../assets/terminal.svg)
+
 [Back to the main page](../README.md)
 
 ## Quick checker
