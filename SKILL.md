@@ -103,6 +103,8 @@ description: Teach and apply Google AdSense approval rules from 2003 to today, a
 
 - Set up a site from `references/19-platform-setup-guides.md`. Place code, publish ads.txt with the line copied from the account, and verify every file live before applying.
 
+- Set up WordPress hands on from `references/38-wordpress-and-site-kit-setup.md`. Use Site Kit by Google or one manual method, never both, verify the code in the live page source while logged out, and purge every cache layer before concluding the code is missing.
+
 - Diagnose any symptom from `references/20-troubleshooting-index.md` first, then read the linked reference for the full fix.
 
 - Build traffic honestly from `references/21-traffic-and-seo-basics.md`. Never recommend bought traffic, click exchanges, bots, or any scheme that pays people to visit or click.
@@ -117,9 +119,13 @@ description: Teach and apply Google AdSense approval rules from 2003 to today, a
 
 - Advise on reporting and tests from `references/26-advanced-reporting-and-experiments.md`. Segment by page, country, and device before concluding anything, test one variable at a time, and treat blocking controls as brand safety tools. Never quote a third-party RPM benchmark as a fact.
 
+- Operate the account tools from `references/39-account-tools-after-approval.md`. Use the Ad Review Center for single ads, start with the narrowest blocking control, and review blocks regularly. These tools only affect ads that are already serving.
+
 - Answer account structure questions from `references/27-account-architecture-and-graduation.md`. One account per payee, payee country and account type locked after activation, no account transfers, and graduation to Ad Manager or MCM only when size and deals demand it. Verify MCM and Ad Manager details on the live Google pages before acting.
 
 - Answer payment, tax, and edge case questions from `references/28-payments-tax-and-edge-cases.md`. List holds by name before diagnosing a late payment, keep tax information current, and label secondary figures as reported. This skill is not tax advice.
+
+- Answer India-specific questions from `references/37-india-publishers-guide.md`. Wire transfer is the only payment method offered in India, the PAN is the foreign tax number for treaty claims, and the DPDP Act 2023 sets consent basics. Label tax and legal points as general information and send the user to a professional.
 
 - Answer technical questions from `references/29-advanced-technical-implementation.md`. Copy the ads.txt line from the account, never modify ad code, never refresh ads, keep one CMP loading before ad requests, and keep crawler access open.
 

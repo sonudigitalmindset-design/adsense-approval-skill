@@ -4,7 +4,7 @@ Recheck these pages before stating a current rule as fact. Google
 changes policies and moves Help pages. When a link redirects, follow
 it to the live page and update this file.
 
-Last checked: 17 November 2026. All links below were reached through
+Last checked: 18 November 2026. All links below were reached through
 web search results or are the well-known AdSense Help entry points.
 
 ## Google official pages
@@ -83,6 +83,25 @@ web search results or are the well-known AdSense Help entry points.
   AdSense Help Center under Privacy and messaging, and read the EU
   User Consent Policy page linked from there. Do not rely on a
   remembered setup path.
+- Add your payment method for AdSense or AdSense for YouTube
+  (country table, India wire transfer only, read live
+  18 November 2026):
+  https://support.google.com/adsense/answer/1714397
+- Connect to AdSense and show ads on your WordPress site
+  (Site Kit setup steps, read live 18 November 2026):
+  https://support.google.com/adsense/answer/7527509
+- AdSense guide to allow and block ads on your site
+  (blocking controls, site-level blocking, read live
+  18 November 2026):
+  https://support.google.com/adsense/answer/180609
+- Ad review center overview (read live 18 November 2026):
+  https://support.google.com/adsense/answer/13547173
+- Enable your Ad review center (read via official search
+  result 18 November 2026):
+  https://support.google.com/adsense/answer/13546846
+- Review ads using the Ad review center (read via official
+  search result 18 November 2026):
+  https://support.google.com/adsense/answer/13547859
 
 ## History sources used for the timeline
 

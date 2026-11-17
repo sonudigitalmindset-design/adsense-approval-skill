@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.9.0 — 18 November 2026
+
+- New `references/37-india-publishers-guide.md`: wire
+  transfer as the only payment method offered in India,
+  verified on the live Help country table on
+  18 November 2026, USD thresholds, PIN delivery notes,
+  tax form and PAN guidance, and DPDP Act 2023 consent
+  basics. Tax and legal points are labelled general
+  information with a professional check, and secondary
+  figures are labelled reported.
+- New `references/38-wordpress-and-site-kit-setup.md`:
+  the hands-on companion to ref 19. Site Kit setup
+  steps, manual placement, live verification, caching
+  pitfalls, and theme problems, verified against the
+  live AdSense Help page on 18 November 2026.
+- New `references/39-account-tools-after-approval.md`:
+  Ad Review Center operation, blocking controls in
+  narrowest-first order, site-level blocking, and
+  reports orientation, verified on live Help pages on
+  18 November 2026. Strategy stays in refs 14 and 26.
+- New `docs/hinglish-quick-start.md`: a Roman Hinglish
+  quick-start guide with no new factual claims.
+- New `docs/staying-updated.md`: how to watch official
+  channels, verify claimed changes, and distrust rumour
+  patterns.
+- `references/11-official-sources.md` gains the payment
+  methods page, the Site Kit page, the blocking guide,
+  and the Ad Review Center pages.
+
 ## 1.8.1 — 17 November 2026
 
 - `references/01-history-timeline.md`: the identity

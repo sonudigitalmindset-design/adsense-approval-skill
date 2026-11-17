@@ -17,6 +17,10 @@ fits your situation.
 - [Audit scripts](audit-scripts.md): the two checkers,
   their options, and how to read their reports.
 - [FAQ](faq.md): short, honest answers.
+- [Hinglish quick start](hinglish-quick-start.md):
+  what the skill is and how to use it, in Roman Hinglish.
+- [Staying updated](staying-updated.md): how to watch
+  official channels and verify claimed changes.
 - [Contributing](contributing.md): how to fix or extend
   the skill.
 
@@ -92,6 +96,12 @@ fits your situation.
   Core Web Vitals thresholds and the page experience questions.
 - [`36-affiliate-content-and-disclosure.md`](../references/36-affiliate-content-and-disclosure.md):
   thin affiliation, link qualification, and disclosure.
+- [`37-india-publishers-guide.md`](../references/37-india-publishers-guide.md):
+  India payments, tax forms, PIN, and DPDP consent basics.
+- [`38-wordpress-and-site-kit-setup.md`](../references/38-wordpress-and-site-kit-setup.md):
+  Site Kit setup, manual placement, caching pitfalls.
+- [`39-account-tools-after-approval.md`](../references/39-account-tools-after-approval.md):
+  Ad Review Center, blocking controls, reports basics.
 
 ## References: advanced
 

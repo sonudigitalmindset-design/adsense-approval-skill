@@ -2,9 +2,9 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange" alt="License: MIT"></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.8.1-orange" alt="Version 1.8.1"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.9.0-orange" alt="Version 1.9.0"></a>
   <img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python 3.8+">
-  <img src="https://img.shields.io/badge/verified-17%20Nov%202026-green" alt="Verified against live official pages: 17 November 2026">
+  <img src="https://img.shields.io/badge/verified-18%20Nov%202026-green" alt="Verified against live official pages: 18 November 2026">
 </p>
 
 <p align="center">A skill that teaches Google AdSense approval end to end, for AI assistants and humans.</p>
@@ -35,7 +35,7 @@ python3 scripts/deep_audit.py https://example.com --output report.md --json repo
 No approval is promised. Google decides every application. This
 skill separates official rules from community practice and myths.
 When a live official page contradicts this skill, the page wins.
-Last verified against live official pages: **17 November 2026**.
+Last verified against live official pages: **18 November 2026**.
 
 ## License
 
