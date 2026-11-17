@@ -26,8 +26,16 @@ Site level:
 - Alternate host (www or bare) redirecting to one canonical host.
 - Homepage reachable with HTTP 200, with response time and
   security headers recorded.
+- Homepage cache and security headers recorded as information
+  only: Cache-Control, CDN or cache headers,
+  Content-Security-Policy, and X-Frame-Options. Presence or
+  absence is a hosting signal, never a review rule.
 - robots.txt present, not blocking all crawling, not blocking
-  the AdSense crawler, and naming a sitemap.
+  the AdSense crawler, and naming a sitemap. Sitemap URLs
+  matching a Disallow rule for User-agent star are flagged
+  as a warning, using the approximate parse documented in
+  the script. A robots.txt that cannot be fetched means
+  unverified, never blocked.
 - ads.txt present with a well formed Google publisher line:
   16-digit publisher ID, DIRECT relationship, and the
   certification ID.
@@ -83,6 +91,21 @@ Cross-page:
 - Duplicate titles and duplicate descriptions.
 - Pages with no H1 or with several H1s.
 - Pages with no lang attribute, no canonical, or no og:image.
+- Sitemap URLs that redirect to a different final URL, listed
+  as a warning. Sitemaps should list final URLs. Heuristic
+  only, not a Google rule.
+- Noindexed pages still listed in the sitemap, listed as a
+  warning. A noindexed page in the sitemap sends a mixed
+  signal to crawlers.
+- Open Graph and Twitter completeness counts as information
+  only: pages missing og:title, og:description, or
+  twitter:card. Share preview signals, never a fail or a
+  warning.
+- Canonical target verification: same-origin canonical URLs
+  not already known good from the crawl are probed, capped
+  at 50. A canonical that does not return 200 is a warning.
+  Blocked or rate limited targets are reported as
+  unverified, never broken.
 - Total images missing alt text.
 - Near-duplicate article text by shingle similarity.
 - Internal link verification: every unique internal link checked
@@ -202,6 +225,26 @@ It identifies itself in the user agent string.
 - Navigation dead end: a page with no internal outlinks is a
   navigation-signal heuristic, not a Google rule. Archives
   and landing pages may be dead ends on purpose.
+- Sitemap redirect summary: a sitemap URL whose final URL
+  differs is a hygiene heuristic, not a Google rule.
+  Trailing-slash-only differences are ignored.
+- Robots-blocked sitemap URLs: the script parses only the
+  User-agent star group, with prefix matching, star
+  wildcards, and dollar end anchors, and applies the
+  longest-match rule with Allow winning ties. It is an
+  approximation. A human must read robots.txt to confirm.
+- Noindex-in-sitemap cross-check: a page that carries
+  noindex through a meta tag or an X-Robots-Tag header and
+  is still listed in the sitemap is a mixed-signal
+  heuristic, not a Google rule.
+- Open Graph and Twitter completeness: counts only,
+  information only, never scored. Missing share tags do
+  not affect the readiness score.
+- Canonical target verification: a probed canonical that
+  does not return 200 is a broken-signal warning. Targets
+  already known good from the crawl are skipped, and the
+  probe cap is 50. Blocked or rate limited targets are
+  unverified, never broken.
 - Readiness score, 100 minus 8 per failure and 2 per warning:
   a work-remaining rank, not a Google score, and it predicts
   nothing about approval.

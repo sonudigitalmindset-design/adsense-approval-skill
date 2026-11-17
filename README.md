@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange" alt="License: MIT"></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.10.0-orange" alt="Version 1.10.0"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.11.0-orange" alt="Version 1.11.0"></a>
   <img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/verified-18%20Nov%202026-green" alt="Verified against live official pages: 18 November 2026">
 </p>

@@ -41,8 +41,15 @@ Site level:
   host.
 - Homepage response time and body size recorded.
 - Security headers recorded (HSTS, X-Content-Type-Options).
+- Cache and security headers recorded as information only:
+  Cache-Control, CDN or cache headers,
+  Content-Security-Policy, and X-Frame-Options. Presence or
+  absence is a hosting signal, never a review rule.
 - robots.txt exists, does not block all crawling, does not
-  block the AdSense crawler, and names a sitemap.
+  block the AdSense crawler, and names a sitemap. Sitemap
+  URLs matching a Disallow rule for User-agent star are
+  flagged as a warning, using an approximate parse. A
+  robots.txt that cannot be fetched means unverified.
 - ads.txt exists and the Google line is well formed: a
   16-digit publisher ID, DIRECT relationship, and the
   certification ID. Malformed lines and conflicting IDs
@@ -102,6 +109,17 @@ Cross-page:
 - Thin pages listed.
 - Pages with no H1, multiple H1s, no lang, no canonical,
   or no og:image listed.
+- Sitemap URLs that redirect to a different final URL
+  listed as a warning, with the final URL shown. Hygiene
+  heuristic, not a Google rule.
+- Noindexed pages still listed in the sitemap listed as a
+  warning. Mixed-signal heuristic, not a Google rule.
+- Open Graph and Twitter completeness counted as
+  information only: pages missing og:title,
+  og:description, or twitter:card. Never scored.
+- Same-origin canonical targets probed, capped at 50,
+  with non-200 targets listed as a warning and blocked
+  targets reported as unverified.
 - Near-duplicate article text found by shingle similarity
   over 75 percent, with the warning that shared template
   text can inflate the score.
@@ -163,6 +181,13 @@ judge them.
 - Whether the consent banner actually renders and works
   for a new visitor. A marker in HTML is not a working
   banner.
+- Whether a robots.txt Disallow match is a real block or
+  a parse approximation. The script parses only the
+  User-agent star group. A human reads robots.txt to
+  confirm before changing anything.
+- Whether a redirecting sitemap URL should be updated to
+  its final URL or the redirect is intentional, for
+  example a short URL kept for sharing.
 
 ## Group C: no script can check
 

@@ -536,6 +536,79 @@ def same_origin(url, base_netloc):
         return False
 
 
+def parse_robots_disallows(robots_body):
+    """Approximate parse of robots.txt rules for User-agent *.
+
+    Returns a list of (is_allow, pattern) rules from groups that name
+    the * agent. Groups naming only specific crawlers (Googlebot,
+    Mediapartners-Google) are not parsed: this is a documented
+    approximation, and a human must read robots.txt for the full
+    picture. A robots.txt that cannot be fetched means unverified,
+    never blocked: the caller skips this check in that case.
+    """
+    groups = []
+    agents = []
+    group_rules = []
+    seen_rule = False
+    for raw_line in robots_body.splitlines():
+        line = raw_line.split("#", 1)[0].strip()
+        if ":" not in line:
+            continue
+        key, _, value = line.partition(":")
+        key = key.strip().lower()
+        value = value.strip()
+        if key == "user-agent":
+            if seen_rule:
+                groups.append((agents, group_rules))
+                agents, group_rules = [], []
+                seen_rule = False
+            agents.append(value.lower())
+        elif key in ("disallow", "allow"):
+            seen_rule = True
+            group_rules.append((key == "allow", value))
+    if agents or group_rules:
+        groups.append((agents, group_rules))
+    applicable = []
+    for group_agents, group_rules in groups:
+        if "*" in group_agents:
+            applicable.extend(group_rules)
+    return applicable
+
+
+def robots_rule_matches(pattern, path):
+    """Prefix match with * as a wildcard and a trailing $ as an anchor.
+
+    An empty pattern matches nothing: an empty Disallow allows
+    everything, following the robots.txt convention.
+    """
+    if not pattern:
+        return False
+    anchored = pattern.endswith("$")
+    core = pattern[:-1] if anchored else pattern
+    regex = re.escape(core).replace(r"\*", ".*")
+    if anchored:
+        return re.fullmatch(regex, path) is not None
+    return re.match(regex, path) is not None
+
+
+def robots_disallows(rules, path):
+    """Longest-match decision over one path.
+
+    The longest matching rule wins. On an equal-length tie, Allow
+    wins, following Google's documented robots.txt behaviour. This
+    is an approximation of full crawler parsing.
+    """
+    best_len = -1
+    best_allow = True
+    for is_allow, pattern in rules:
+        if not pattern or not robots_rule_matches(pattern, path):
+            continue
+        if len(pattern) > best_len or (len(pattern) == best_len and is_allow):
+            best_len = len(pattern)
+            best_allow = is_allow
+    return best_len >= 0 and not best_allow
+
+
 def clean_link(href, page_url):
     if not href:
         return None
@@ -622,6 +695,33 @@ def main():
         info("X-Content-Type-Options header present.")
     else:
         info("No X-Content-Type-Options header (optional hardening).")
+    # Cache and security headers: information only, never a fail or
+    # warn. Presence or absence is a hosting signal, not a review rule.
+    header_presence = {
+        "cache_control": "cache-control" in home_headers,
+        "cdn_cache": any(h in home_headers for h in
+                         ("cf-cache-status", "x-cache", "age", "x-served-by")),
+        "content_security_policy": "content-security-policy" in home_headers,
+        "x_frame_options": "x-frame-options" in home_headers,
+    }
+    if header_presence["cache_control"]:
+        info(f"Homepage Cache-Control: {home_headers['cache-control'][:80]}.")
+    else:
+        info("No Cache-Control header on the homepage response (caching signal only).")
+    if header_presence["cdn_cache"]:
+        present = [h for h in ("cf-cache-status", "x-cache", "age", "x-served-by")
+                   if h in home_headers]
+        info(f"Homepage CDN or cache headers present: {', '.join(present)}.")
+    else:
+        info("No CDN or cache headers seen on the homepage response (information only).")
+    if header_presence["content_security_policy"]:
+        info("Content-Security-Policy header present on the homepage response.")
+    else:
+        info("No Content-Security-Policy header (information only, not a review rule).")
+    if header_presence["x_frame_options"]:
+        info(f"X-Frame-Options header present: {home_headers['x-frame-options']}.")
+    else:
+        info("No X-Frame-Options header (information only, not a review rule).")
     if "noindex" in home_headers.get("x-robots-tag", "").lower():
         report("fail", "Homepage carries noindex through the X-Robots-Tag header. A noindexed homepage cannot be reviewed or ranked. Remove it before applying.")
 
@@ -671,6 +771,8 @@ def main():
 
     # robots.txt, deep
     status, _, robots, _, _, _ = site_results["robots"]
+    robots_status = status
+    robots_body = robots
     if status == 200:
         if re.search(r"User-agent:\s*\*\s*\nDisallow:\s*/\s*$", robots, re.M):
             report("fail", "robots.txt disallows all crawling.")
@@ -1209,6 +1311,58 @@ def main():
     if no_author:
         info(f"{len(no_author)} pages show no author or byline signal in markup.")
 
+    # Sitemap hygiene cross-checks: redirects, robots blocks, and
+    # noindex membership. Heuristic only, never Google rules.
+    sitemap_norm = {u.rstrip("/") for u in sitemap_urls}
+    redirected = [r for r in ok_pages
+                  if r["url"].rstrip("/") in sitemap_norm
+                  and r.get("final", "").rstrip("/") != r["url"].rstrip("/")]
+    if redirected:
+        report("warn", f"{len(redirected)} sitemap {'URL redirects' if len(redirected) == 1 else 'URLs redirect'} to a different final URL. Sitemaps should list final URLs, so crawlers and reviewers land directly. Heuristic only, not a Google rule.")
+        for r in redirected[:20]:
+            print(f"      {r['url']} -> {r['final']}")
+    else:
+        info("No crawled sitemap URL redirects to a different final URL.")
+
+    robots_blocked = []
+    if robots_status == 200 and robots_body:
+        robots_rules = parse_robots_disallows(robots_body)
+        for page_url in pages:
+            if page_url.rstrip("/") not in sitemap_norm:
+                continue
+            parsed_page = urlparse(page_url)
+            full_path = parsed_page.path or "/"
+            if parsed_page.query:
+                full_path += "?" + parsed_page.query
+            if robots_disallows(robots_rules, full_path):
+                robots_blocked.append(page_url)
+    if robots_blocked:
+        report("warn", f"{len(robots_blocked)} sitemap {'URL matches' if len(robots_blocked) == 1 else 'URLs match'} a robots.txt Disallow rule for User-agent *. A blocked URL cannot be crawled for review. Approximate parse of the star agent group only; read robots.txt in a browser to confirm.")
+        for u in robots_blocked[:20]:
+            print(f"      {u}")
+    elif robots_status == 200:
+        info("No sitemap URL matches a robots.txt Disallow rule for User-agent * (approximate parse).")
+    # If robots.txt could not be fetched, the check is unverified and
+    # stays silent here: the site-level section already reported it.
+
+    noindex_sitemap = [r for r in ok_pages
+                       if r["url"].rstrip("/") in sitemap_norm
+                       and ("noindex" in r["robots_meta"].lower()
+                            or "noindex" in r.get("x_robots", "").lower())]
+    if noindex_sitemap:
+        report("warn", f"{len(noindex_sitemap)} noindexed {'page is' if len(noindex_sitemap) == 1 else 'pages are'} still listed in the sitemap. Remove them from the sitemap or remove the noindex. A noindexed page in the sitemap sends a mixed signal to crawlers.")
+        for r in noindex_sitemap[:20]:
+            print(f"      {r['url']}")
+    else:
+        info("No noindexed page is listed in the sitemap.")
+
+    # Open Graph and Twitter completeness: information only, counts
+    # only. Share preview signals, never a fail or a warn.
+    missing_og_title = [r for r in ok_pages if not r["og_title"]]
+    missing_og_desc = [r for r in ok_pages if not r["og_description"]]
+    missing_twitter = [r for r in ok_pages if not r["twitter_card"]]
+    info(f"Open Graph and Twitter completeness: {len(missing_og_title)} of {len(ok_pages)} pages lack og:title, {len(missing_og_desc)} lack og:description, {len(missing_twitter)} lack twitter:card. Share preview signals only, never a review rule.")
+
     # Deep trust and completeness signals
     print()
     print("Deep trust signals (reviewer-eye checks, not Google rules):")
@@ -1451,6 +1605,61 @@ def main():
         for link, size in big_imgs[:10]:
             print(f"      {size // 1024} KB: {link}")
 
+    # ---- Canonical target verification ----
+    # Canonical presence and direction are per-page flags above. This
+    # section probes the canonical URL itself: a canonical that points
+    # at a dead page is a broken signal. Same-origin targets only,
+    # capped, and targets already known good from the crawl are
+    # skipped. Unverifiable targets stay unverified, never broken.
+    print()
+    known_ok = {r["url"].rstrip("/") for r in ok_pages}
+    known_ok |= {r.get("final", "").rstrip("/") for r in ok_pages}
+    canon_targets = []
+    seen_canon = set()
+    for r in ok_pages:
+        canon = r.get("canonical") or ""
+        if not canon:
+            continue
+        absolute = urljoin(r["url"], canon).split("#")[0]
+        if not same_origin(absolute, netloc):
+            continue
+        if absolute.rstrip("/") in known_ok or absolute in seen_canon:
+            continue
+        seen_canon.add(absolute)
+        canon_targets.append(absolute)
+        if len(canon_targets) >= 50:
+            break
+    print(f"Verifying {len(canon_targets)} unique same-origin canonical targets not already known good (cap 50).")
+    canon_broken = []
+    canon_unverified = []
+    if canon_targets:
+        probed_canon = []
+        with ThreadPoolExecutor(max_workers=args.workers) as executor:
+            for i, result in enumerate(executor.map(
+                _probe_url,
+                [(link, args.timeout, args.delay) for link in canon_targets],
+            ), 1):
+                probed_canon.append(result)
+                if i % 25 == 0 or i == len(canon_targets):
+                    _progress(i, len(canon_targets), "canonical targets checked")
+        for link, status, error, _ in probed_canon:
+            if status is not None and 200 <= status < 400:
+                continue
+            if status in (401, 403, 429) or status is None:
+                canon_unverified.append((link, error or status))
+            else:
+                canon_broken.append((link, error or status))
+    if canon_broken:
+        report("warn", f"{len(canon_broken)} canonical {'URL does' if len(canon_broken) == 1 else 'URLs do'} not return 200. A canonical that points at a dead page is a broken signal. Check each in a browser.")
+        for link, problem in canon_broken[:20]:
+            print(f"      {link} -> {problem}")
+    elif canon_targets:
+        report("ok", "Every probed canonical target returns 200.")
+    else:
+        info("No canonical targets needed probing: every same-origin canonical points at a crawled page or the page itself.")
+    if canon_unverified:
+        info(f"{len(canon_unverified)} canonical {'target' if len(canon_unverified) == 1 else 'targets'} could not be verified (blocked, rate limited, or unreachable from here).")
+
     # ---- Score and verdict ----
     print()
     score = max(0, 100 - 8 * RESULTS["fail"] - 2 * RESULTS["warn"])
@@ -1534,6 +1743,19 @@ def main():
             "images_broken": [link for link, _ in broken_imgs],
             "images_unverified": [link for link, _ in unverified_imgs],
             "images_over_1mb": [link for link, _ in big_imgs],
+            "redirected_sitemap_urls": [r["url"] for r in redirected],
+            "robots_blocked_sitemap_urls": robots_blocked,
+            "noindex_in_sitemap": [r["url"] for r in noindex_sitemap],
+            "canonical_targets_checked": len(canon_targets),
+            "canonical_targets_broken": [link for link, _ in canon_broken],
+            "canonical_targets_unverified": [link for link, _ in canon_unverified],
+            "og_completeness": {
+                "pages": len(ok_pages),
+                "missing_og_title": len(missing_og_title),
+                "missing_og_description": len(missing_og_desc),
+                "missing_twitter_card": len(missing_twitter),
+            },
+            "homepage_headers": header_presence,
             "near_duplicate_pairs": [
                 {"similarity": round(sim, 2), "left": left, "right": right}
                 for sim, left, right in dup_pairs

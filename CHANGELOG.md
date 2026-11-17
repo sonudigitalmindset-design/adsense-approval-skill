@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.11.0 — 18 November 2026
+
+- `scripts/deep_audit.py` gains six genuinely new checks.
+  Canonical-presence, canonical-direction, empty-title, and
+  empty-description checks already existed as per-page
+  flags, so they were not added again. The new checks are:
+  sitemap redirect summary (warn, with final URLs),
+  robots-blocked sitemap URLs (warn, approximate
+  User-agent star parse, unverified when robots.txt
+  cannot be fetched), noindex-in-sitemap cross-check
+  (warn), Open Graph and Twitter completeness counts
+  (information only, never scored), homepage cache and
+  security header presence (information only), and
+  canonical target verification (warn for non-200,
+  capped at 50, blocked targets unverified). The JSON
+  report gains matching fields. Existing checks are
+  unchanged: the example.com control before and after
+  shows an identical summary and identical check list.
+  Fixture-server tests confirm all six checks fire, and
+  a capped run on thegroundzerofit.com runs clean.
+- `references/23-approval-clone-audit.md` and
+  `references/31-approval-check-matrix.md` document the
+  new checks with their heuristic status and the robots
+  parser approximation.
+
 ## 1.10.0 — 18 November 2026
 
 - New `references/40-eeat-and-author-trust.md`: E-E-A-T
