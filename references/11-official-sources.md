@@ -102,6 +102,30 @@ web search results or are the well-known AdSense Help entry points.
 - Review ads using the Ad review center (read via official
   search result 18 November 2026):
   https://support.google.com/adsense/answer/13547859
+- Creating helpful, reliable, people-first content (E-E-A-T,
+  read live 18 November 2026):
+  https://developers.google.com/search/docs/fundamentals/creating-helpful-content
+- Spam policies for Google Web Search, scaled content abuse
+  section (read live 18 November 2026):
+  https://developers.google.com/search/docs/essentials/spam-policies
+- Google Search guidance about AI-generated content (8 February
+  2023, read live 18 November 2026):
+  https://developers.google.com/search/blog/2023/02/google-search-and-ai-content
+- Using generative AI content (read live 18 November 2026):
+  https://developers.google.com/search/docs/fundamentals/using-gen-ai-content
+- Sign up for AdMob (read live 18 November 2026):
+  https://support.google.com/admob/answer/7356219
+- Mediation overview (read live 18 November 2026):
+  https://support.google.com/admob/answer/13420272
+- Set up app-ads.txt (read via official search result
+  18 November 2026):
+  https://support.google.com/admob/answer/9363762
+- Comply with Google Play's families policy using AdMob
+  (read via official search result 18 November 2026):
+  https://support.google.com/admob/answer/6223431
+- AdMob release notes, May 2026 TFAT entry (read via official
+  search result 18 November 2026):
+  https://support.google.com/admob/answer/15269273
 
 ## History sources used for the timeline
 

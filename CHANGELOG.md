@@ -1,5 +1,47 @@
 # Changelog
 
+## 1.10.0 — 18 November 2026
+
+- New `references/40-eeat-and-author-trust.md`: E-E-A-T
+  as a Search Central quality framework with an explicit
+  boundary that it is not an AdSense approval rule, plus
+  author trust signals mapped to review readiness as
+  inferred practice guidance. Definitions verified on
+  the live Search Central page on 18 November 2026.
+- New `references/41-ai-assisted-and-scaled-content.md`:
+  Google's official stance that AI content is not banned
+  per se, with the scaled content abuse rule from the
+  live spam policies page, the 2023 AI guidance blog,
+  and the generative AI guidance page, all read on
+  18 November 2026, plus a safe human-checked workflow.
+- New `references/42-publisher-scams-protection.md`:
+  fake approval services, buying and selling approved
+  accounts, fake support numbers and phishing, and
+  unrealistic guarantees. The account-transfer point is
+  labelled reported from the official Help snippet and
+  the filed Terms, because the direct page fetch was
+  rate-limited. The rest is practical guidance.
+- New `references/43-admob-guide.md`: dedicated AdMob
+  guide covering signup, app setup, ad units, mediation
+  basics, app-ads.txt, families policy and TFAT, and
+  the key policy differences from AdSense for Content,
+  verified on AdMob Help pages on 18 November 2026.
+- `references/04-publisher-restrictions.md` gains a
+  child-directed content section covering the web,
+  AdMob, and YouTube angles, with TFAT replacing
+  TFCD and TFUA.
+- New `scripts/rejection_decoder.py`: a stdlib-only
+  CLI that matches pasted rejection email text to the
+  sections of ref 07 and prints fix checklist pointers.
+  Keyword matching only, with a clear note that it
+  guesses from wording and the user must read the
+  actual email. Tested with sample inputs.
+- `references/11-official-sources.md` gains the
+  Search Central helpful-content, spam policies, and
+  generative AI pages, the AI guidance blog, and the
+  AdMob signup, mediation, app-ads.txt, and families
+  policy pages.
+
 ## 1.9.0 — 18 November 2026
 
 - New `references/37-india-publishers-guide.md`: wire

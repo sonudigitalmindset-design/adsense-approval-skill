@@ -71,3 +71,85 @@ paraphrased; the official page controls.
   ads may be limited without it being visible.
 - Removing ads from one restricted page does not make the rest of the
   site immune. Reviewers judge the whole site.
+
+## Child-directed content
+
+This section covers content directed at children and content in apps
+and videos that reaches a child audience. The rules differ by surface,
+so read the part that matches the product being used.
+
+### On the web and in AdSense for Content
+
+Status: general guidance, not a directly verified policy quote. The
+specific ad limitations for a given page are set by the platform rules
+and the law of the audience's region, so recheck the live policy pages
+before relying on this summary.
+
+Content made for children is not prohibited, but it carries extra
+obligations. Child-privacy law, including the US Children's Online
+Privacy Protection Act (COPPA) and equivalent rules in other regions,
+limits what data can be collected from children and what advertising
+can be shown to them. Google's publisher policies and consent rules
+sit on top of those laws. In practice this means:
+
+- Personalised advertising is limited or unavailable on content
+  directed at children. Expect lower demand and lower earnings on
+  those pages.
+- Consent handling is stricter. Consent must come from a parent or
+  guardian where the law requires it, and the consent flow must match
+  the rules of every region the audience lives in.
+- A site that mixes general content with child-directed content must
+  keep the two clearly separated, with honest titles and no attempt to
+  present child-directed pages as general-audience pages.
+- This file is not legal advice. Child-privacy law varies by country
+  and changes over time. Check the current rules with a qualified
+  professional before building a child-directed site or section.
+
+### In apps and AdMob
+
+Source: AdMob Help, "Comply with Google Play's families policy using
+AdMob" (answer 6223431), read via official search results on 18
+November 2026, and the AdMob release notes announcement of May 2026
+(answer 15269273), read via official search results on 18 November
+2026. Status: OFFICIAL for the Help article, REPORTED for the
+announcement entry.
+
+- Apps that target children and show ads must comply with Google
+  Play's families policy. AdMob provides tools for this, but the
+  developer remains responsible for compliance.
+- Apps designed specifically for children receive families
+  policy-compliant ads automatically when only child age groups are
+  selected in Play Console.
+- Mixed-audience apps must tag ad requests served to children and set
+  the maximum ad content rating to G.
+- All Android apps classified as Families must use a Google Play
+  Families self-certified ads SDK or mediation platform when serving
+  ads to children or users of unknown age.
+- The current SDK control is Tag for age treatment (TFAT). It replaces
+  the older tag for child-directed treatment (TFCD) and tag for users
+  under the age of consent (TFUA). TFAT values are CHILD, TEEN (new),
+  and UNSPECIFIED (the default). The legacy tags continue to work
+  through 2026, and migration is encouraged. The announcement advises
+  consulting legal counsel.
+- For the full AdMob treatment, see `43-admob-guide.md`.
+
+### On YouTube
+
+YouTube creators mark each video or channel as made for kids where
+that is accurate. The designation changes which features are available
+and which ads can serve. A video that a child could watch is not
+automatically made for kids. The test is whether children are the
+intended audience, judged by subject matter, characters, and
+presentation. Mis-marking in either direction is a policy risk. See
+`17-youtube-and-other-products.md` for the YouTube overview.
+
+### What not to do
+
+- Do not present child-directed content as general-audience content to
+  get fuller ad demand. The audience declaration is a compliance
+  statement, not a setting to tune for earnings.
+- Do not collect data from children beyond what the law and the
+  platform rules allow.
+- Do not rely on an SDK tag alone for compliance. The tag, the content
+  rating, the self-certified SDK, and the store declaration all have
+  to match the real audience.

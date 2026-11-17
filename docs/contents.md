@@ -102,6 +102,14 @@ fits your situation.
   Site Kit setup, manual placement, caching pitfalls.
 - [`39-account-tools-after-approval.md`](../references/39-account-tools-after-approval.md):
   Ad Review Center, blocking controls, reports basics.
+- [`40-eeat-and-author-trust.md`](../references/40-eeat-and-author-trust.md):
+  E-E-A-T as a Search framework, author trust signals.
+- [`41-ai-assisted-and-scaled-content.md`](../references/41-ai-assisted-and-scaled-content.md):
+  official AI stance, scaled content abuse, safe workflow.
+- [`42-publisher-scams-protection.md`](../references/42-publisher-scams-protection.md):
+  fake approval services, account sales, phishing.
+- [`43-admob-guide.md`](../references/43-admob-guide.md):
+  AdMob setup, mediation, app-ads.txt, families policy.
 
 ## References: advanced
 

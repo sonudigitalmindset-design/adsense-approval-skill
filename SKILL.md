@@ -105,6 +105,10 @@ description: Teach and apply Google AdSense approval rules from 2003 to today, a
 
 - Set up WordPress hands on from `references/38-wordpress-and-site-kit-setup.md`. Use Site Kit by Google or one manual method, never both, verify the code in the live page source while logged out, and purge every cache layer before concluding the code is missing.
 
+- Explain E-E-A-T from `references/40-eeat-and-author-trust.md`. E-E-A-T is a Search Central quality framework, not an AdSense approval rule. Author pages, bios, and consistent identity are trust signals that support review readiness, never pass conditions.
+
+- Answer AI content questions from `references/41-ai-assisted-and-scaled-content.md`. AI content is not banned per se. Quality and the scaled content abuse rule decide. Raw unedited AI output is the highest-risk pattern, and disclosure never fixes thin content.
+
 - Diagnose any symptom from `references/20-troubleshooting-index.md` first, then read the linked reference for the full fix.
 
 - Build traffic honestly from `references/21-traffic-and-seo-basics.md`. Never recommend bought traffic, click exchanges, bots, or any scheme that pays people to visit or click.
@@ -120,6 +124,12 @@ description: Teach and apply Google AdSense approval rules from 2003 to today, a
 - Advise on reporting and tests from `references/26-advanced-reporting-and-experiments.md`. Segment by page, country, and device before concluding anything, test one variable at a time, and treat blocking controls as brand safety tools. Never quote a third-party RPM benchmark as a fact.
 
 - Operate the account tools from `references/39-account-tools-after-approval.md`. Use the Ad Review Center for single ads, start with the narrowest blocking control, and review blocks regularly. These tools only affect ads that are already serving.
+
+- Warn about scams from `references/42-publisher-scams-protection.md`. Never buy or sell an approved account, never trust a guaranteed approval service or a phone number claiming to be AdSense support, and never share passwords, OTPs, or backup codes with anyone.
+
+- Answer AdMob questions from `references/43-admob-guide.md`. AdMob is app-only, with its own account, mediation groups, app-ads.txt, and families policy layer including TFAT. Keep it separate from AdSense for Content.
+
+- Decode a rejection email with `scripts/rejection_decoder.py`. It guesses from wording only, by matching keywords to the sections of `references/07-rejection-reasons-and-fixes.md`. The user must still read the actual email and the reason shown in the account.
 
 - Answer account structure questions from `references/27-account-architecture-and-graduation.md`. One account per payee, payee country and account type locked after activation, no account transfers, and graduation to Ad Manager or MCM only when size and deals demand it. Verify MCM and Ad Manager details on the live Google pages before acting.
 
