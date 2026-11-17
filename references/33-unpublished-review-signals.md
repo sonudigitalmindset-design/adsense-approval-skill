@@ -122,6 +122,19 @@ INFERRED: a site that loads well and respects the reader.
   host, and clean redirects.
 - A favicon, a language attribute, and share previews
   that render correctly.
+- What the crawler sees. INFERRED. A JavaScript-rendered
+  site can look complete in a browser while serving an
+  empty shell to a crawler. The SlayerLegendWiki audit
+  (26 August 2026) found every route returning HTTP 200
+  with an empty body when fetched with a Googlebot user
+  agent, which read as site-wide screens without
+  publisher content. Fetch key pages with curl using a
+  crawler user agent and confirm article text is present
+  in the raw HTML. The deep audit script fetches raw
+  HTML without running JavaScript, so its word counts
+  reflect the crawler view, not the rendered view.
+  Source: SlayerLegendWiki AdSense acceptance plan
+  (GitHub, 26 August 2026), read 18 November 2026.
 
 The script checks: homepage timing, image file sizes,
 viewport, noindex flags, robots.txt depth, mixed

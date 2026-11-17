@@ -1,5 +1,39 @@
 # Changelog
 
+## 1.12.0 — 18 November 2026
+
+- New `docs/check-catalog.md`: every check in
+  `scripts/deep_audit.py` and `scripts/site_audit.py`
+  enumerated from the code, each with its status label
+  and a one-line description. True count: 159 check
+  instances (58 deep audit report checks, 41 deep audit
+  information lines, 32 deep audit per-page flag types,
+  27 site audit report checks, 1 site audit information
+  line), split 16 OFFICIAL, 22 REPORTED, 78 INFERRED,
+  43 INFO. The catalog states plainly that the count is
+  check instances, not Google rules, and that no count
+  matches Google's decision. Nothing was padded, split,
+  or renamed to reach any target number.
+- No remaining checker work: all genuinely new checks
+  from the corrected brief landed in v1.11.0, so this
+  release adds no new script checks.
+- `references/32-hidden-deep-approval-checks.md` gains
+  one INFERRED signal: per-screen inventory judgement,
+  sourced from two dated 2026 case audits and the
+  official Inventory value policy page, read
+  18 November 2026.
+- `references/33-unpublished-review-signals.md` gains
+  one INFERRED signal: what the crawler sees on
+  JavaScript-rendered sites, sourced from the
+  SlayerLegendWiki audit of 26 August 2026, read
+  18 November 2026. Other candidates from the fresh
+  research were left out: the six-month domain-age claim
+  is disputed folklore that contradicts the verified
+  position, invented post-count and word-count
+  thresholds contradict the published no-minimum
+  position, and dead-end screen rules already live in
+  ref 03.
+
 ## 1.11.0 — 18 November 2026
 
 - `scripts/deep_audit.py` gains six genuinely new checks.

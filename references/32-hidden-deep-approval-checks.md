@@ -56,6 +56,26 @@ cause of rejection.
   with no experience behind them, and pages that answer
   nothing fully. The signal is depth and originality,
   not length.
+- Per-screen inventory judgement. INFERRED from two 2026
+  case audits, applied to the Inventory value policy
+  stated in `03-publisher-policies.md`. The
+  SlayerLegendWiki audit (26 August 2026, after two low
+  value content rejections) and the CalcFuel remediation
+  spec (21 August 2026) both report that the verdict
+  appears to judge screens individually: one strong
+  guide does not offset many empty-looking screens, and
+  a navigation-only homepage carrying an ad unit was the
+  clearest single violation found. The policy page
+  itself does not state a per-screen rule, so this
+  reading stays INFERRED. The practical fix is the same
+  either way: every screen that will carry ads needs
+  publisher content as its focal point, including hub,
+  archive, and tool pages. Sources: SlayerLegendWiki
+  AdSense acceptance plan (GitHub, 26 August 2026) and
+  CalcFuel AdSense remediation spec (GitHub, 21 August
+  2026), read 18 November 2026. Policy text: Publisher
+  Policies Help, answer 11112688, read via official
+  search result 18 November 2026.
 - Thin site. Very few pages, or pages that are mostly
   navigation and boilerplate with little real content.
   No fixed number is published, but a site with three

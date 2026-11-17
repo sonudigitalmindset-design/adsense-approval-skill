@@ -16,6 +16,8 @@ fits your situation.
   first site, a rejection, and an approved account.
 - [Audit scripts](audit-scripts.md): the two checkers,
   their options, and how to read their reports.
+- [Check catalog](check-catalog.md): every check in both
+  scripts, with its status label, counted honestly.
 - [FAQ](faq.md): short, honest answers.
 - [Hinglish quick start](hinglish-quick-start.md):
   what the skill is and how to use it, in Roman Hinglish.
